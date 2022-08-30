@@ -1,5 +1,7 @@
 <?php
 
+// ===============================================
+
 class Controller_Chat extends Controller_Rest
 {
     
@@ -14,6 +16,10 @@ class Controller_Chat extends Controller_Rest
 			'content' => "$message",
 		))->execute();
 
+        $data['data'] = DB::select()->from('messages')->execute()->as_array();
+        // Response::redirect('message/index', $data);
     }
 
 }
+
+// ===============================================

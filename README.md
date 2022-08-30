@@ -1,8 +1,25 @@
 # HR クラウド 内定者インターン課題
 
-<p></p>
+## Review 用
 
-## ※随時修正していきます
+[チャット画面(view)](/fuel/app/views/message/index.php)
+
+[チャット保存(controller)](/fuel/app/classes/controller/chat.php)
+
+[チャット画面(controller)](/fuel/app/classes/controller/message.php)
+
+[全てをテキストファイルにまとめたもの](/textforreview.txt)
+
+<p>===============================================<br>で囲まれたところを見てください。</p>
+<p>まだまだ理解がかなり浅めの状態なので、今回の添削結果を一つのモデルにしたいと思っています。</p>
+<p>なのでできるだけ細かく、書き方を教えて頂けると助かります。</p>
+
+項目
+
+- Ajax の使い方の確認
+- view でチャット内容の表示方法
+
+<br>
 
 ## <課題　開発編要件>
 

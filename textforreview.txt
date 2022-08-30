@@ -1,46 +1,6 @@
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+message/index.php (チャット画面)
 
-
-<h1>ログイン成功</h1>
-
-<h3>
-    <?php
-     foreach ($data as $datum) {
-        $user = $datum['username'];
-        $posted_at = $datum['posted_at'];
-        $content = $datum['content'];
-        echo "$user $posted_at";
-        echo '<br>';
-        echo $content;
-        echo '<br>';
-        echo '<br>';
-        
-    }
-    ?>
-</h3>
-
-
-<!-- <form method="POST" action="/message/post">
-    <input type="text" name='message'>
-    <button type="submit">送信</button>
-
-</form> -->
-
-
-
-<!-- <form method="POST" action="/message/post" data-bind="submit: addItem">
-    <input type="text" name='message' data-bind='value: itemToAdd, valueUpdate: "afterkeydown"'>
-    <button type="submit" data-bind="enable: itemToAdd().length > 0">送信</button>
-    <p>メッセージ一覧</p>
-    <select multiple="multiple" width="50" data-bind="options: items"> </select>
-
-</form> -->
-
-
-<!-- =============================================== -->
-
+===============================================
 
 <form action="" method="post" data-bind="submit: addItem">
     <!-- <input type="text" name="username" data-bind='value: itemToAdd, valueUpdate: "afterkeydown"'> -->
@@ -96,8 +56,6 @@
     });
     console.log(chat);
 
-// 
-
     var items = chat;
 
     var SimpleListModel = function(items) {
@@ -106,10 +64,10 @@
         this.itemToAdd = ko.observable("");
         this.addItem = function() {
             if (this.itemToAdd() != "") {
-                this.items.push(this.itemToAdd()); // Adds the item. Writing to the "items" observableArray causes any associated UI to update.
-                this.itemToAdd(""); // Clears the text box, because it's bound to the "itemToAdd" observable
+                this.items.push(this.itemToAdd());
+                this.itemToAdd("");
             }
-        }.bind(this);  // Ensure that "this" is always this view model
+        }.bind(this);
     };
  
 
@@ -117,4 +75,54 @@ ko.applyBindings(new SimpleListModel([items]));
 
 </script>
 
-<!-- =============================================== -->
+
+===============================================
+
+
+controller/message.php (チャット画面表示用)
+
+
+===============================================
+
+class Controller_Message extends Controller
+{
+    
+    public function action_index()
+    {
+
+		$data['data'] = DB::select()->from('messages')->execute()->as_array();
+		$data['contents'] = DB::select('content')->from('messages')->execute()->as_array();
+
+        return View::forge('message/index', $data);
+
+    }   
+
+}
+
+===============================================
+
+
+controller/chat.php (チャット保存用)
+
+
+===============================================
+
+class Controller_Chat extends Controller_Rest
+{
+    
+    protected $default_format = 'json';
+
+    public function post_chat_post()
+    {
+        $username = Input::post('username');
+        $message = Input::post('content');
+        DB::insert('messages')->set(array(
+			'username' => "$username",
+			'content' => "$message",
+		))->execute();
+
+        $data['data'] = DB::select()->from('messages')->execute()->as_array();
+        // Response::redirect('message/index', $data);
+    }
+
+}
