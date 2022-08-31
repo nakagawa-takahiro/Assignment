@@ -5,48 +5,22 @@
 
 <h1>ログイン成功</h1>
 
-<h3>
-    <?php
-     foreach ($data as $datum) {
-        $user = $datum['username'];
-        $posted_at = $datum['posted_at'];
-        $content = $datum['content'];
-        echo "$user $posted_at";
-        echo '<br>';
-        echo $content;
-        echo '<br>';
-        echo '<br>';
-        
-    }
-    ?>
-</h3>
+<div data-bind="foreach: { data: obj, as:'ob' }">
+    <span data-bind="text: ob['username']"></span> <span data-bind="text: ob['posted_at']"></span><br>
+    <span data-bind="text: ob['content']"></span><br>
+    <br>
+    
+</div>
 
-
-<!-- <form method="POST" action="/message/post">
-    <input type="text" name='message'>
-    <button type="submit">送信</button>
-
-</form> -->
-
-
-
-<!-- <form method="POST" action="/message/post" data-bind="submit: addItem">
-    <input type="text" name='message' data-bind='value: itemToAdd, valueUpdate: "afterkeydown"'>
-    <button type="submit" data-bind="enable: itemToAdd().length > 0">送信</button>
-    <p>メッセージ一覧</p>
-    <select multiple="multiple" width="50" data-bind="options: items"> </select>
-
-</form> -->
-
-
-<!-- =============================================== -->
+<div data-bind="foreach: { data: chats, as:'chat' }">
+    <p data-bind="text: chat"></p>
+</div>
 
 
 <form action="" method="post" data-bind="submit: addItem">
-    <!-- <input type="text" name="username" data-bind='value: itemToAdd, valueUpdate: "afterkeydown"'> -->
     <input type="text" name="content" data-bind='value: itemToAdd, valueUpdate: "afterkeydown"'>
     <button onclick="submitForm();" data-bind="enable: itemToAdd().length > 0">送信</button>
-    <p multiple="multiple" width="50" data-bind="text: items"> </p>
+    <!-- <p multiple="multiple" width="50" data-bind="text: items"> </p> -->
     
 </form>
 
@@ -54,16 +28,16 @@
 
 
     function submitForm(){
-        var username = "user1";
-        var content = $('input[name=content]').val();
-        var formData = {
+        let username = "user1";
+        let content = $('input[name=content]').val();
+        let formData = {
             username: username,
             content: content
         };
         console.log(formData);
 
         $.ajax({
-            url: "http://localhost/chat/chat_post.json",
+            url: '<?php echo Uri::create('chat/chat_post.json'); ?>',
             type: 'POST',
             cache: false,
             dataType : 'json',
@@ -77,44 +51,42 @@
         });
     }
 
-    // 表示するためにゴリ押ししてます…
-    var json = 
+    let json = 
     '<?php
-      $json=json_encode($contents);
+      $json=json_encode($data);
       echo $json;
     ?>'
+    console.log(json)
     
     const obj = JSON.parse(json);
-    console.log(obj['content']);
+    console.log(obj);
 
-    var chat = [];
+    let chats = [];
 
     obj.forEach(function(element){
         // console.log(element['content']);
-        chat.push(element['content']);
+        chats.push(element['content']);
 
     });
-    console.log(chat);
+    console.log(chats);
 
-// 
 
-    var items = chat;
+    let items = chats;
 
-    var SimpleListModel = function(items) {
+    let SimpleListModel = function(chats) {
         
-        this.items = ko.observableArray(items);
+        this.chats = ko.observableArray(chats);
         this.itemToAdd = ko.observable("");
         this.addItem = function() {
             if (this.itemToAdd() != "") {
-                this.items.push(this.itemToAdd()); // Adds the item. Writing to the "items" observableArray causes any associated UI to update.
-                this.itemToAdd(""); // Clears the text box, because it's bound to the "itemToAdd" observable
+                this.chats.push(this.itemToAdd());
+                this.itemToAdd("");
             }
-        }.bind(this);  // Ensure that "this" is always this view model
+        }.bind(this);
+
     };
  
 
-ko.applyBindings(new SimpleListModel([items]));
+ko.applyBindings(new SimpleListModel());
 
 </script>
-
-<!-- =============================================== -->
