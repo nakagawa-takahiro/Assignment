@@ -2,22 +2,28 @@
 
 ## Review 用
 
+<p>8/31の成果です。</p>
+
+- issues(URL の指定方法)
+- issues(変数の宣言について)
+- issues(処理をまとめたい)
+- issues(メッセージの表示方法について)
+
+<p>上2つについてはissuesにコメントしました。</p>
+<p>下2つについては動画を見て頂いたうえで、またレビューしてもらえると助かります。</p>
+
 [チャット画面(view)](/fuel/app/views/message/index.php)
 
 [チャット保存(controller)](/fuel/app/classes/controller/chat.php)
 
-[チャット画面(controller)](/fuel/app/classes/controller/message.php)
+<!-- [チャット画面(controller)](/fuel/app/classes/controller/message.php) -->
 
-[全てをテキストファイルにまとめたもの](/textforreview.txt)
+[現状報告としてわかりやすいように動画を撮りました(音声ありです)](https://youtu.be/pOWiOGCalZM)
 
-<p>===============================================<br>で囲まれたところを見てください。</p>
-<p>まだまだ理解がかなり浅めの状態なので、今回の添削結果を一つのモデルにしたいと思っています。</p>
-<p>なのでできるだけ細かく、書き方を教えて頂けると助かります。</p>
+お願いしたい項目(8/31)
 
-項目
-
-- Ajax の使い方の確認
-- view でチャット内容の表示方法
+- code review
+- 別タブの表示内容もリアルタイムに変更させる方法
 
 <br>
 
