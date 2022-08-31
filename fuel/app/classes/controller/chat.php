@@ -16,10 +16,13 @@ class Controller_Chat extends Controller_Rest
 			'content' => "$message",
 		))->execute();
 
-        $data['data'] = DB::select()->from('messages')->execute()->as_array();
-        // Response::redirect('message/index', $data);
-    }
+        // $data = DB::select()->from('messages')->execute()->as_array();
 
+        $this->response(array('username' => $username, 'content' => $message) 
+        );
+        // return $this->response($data, 200);
+    }
+    
 }
 
 // ===============================================

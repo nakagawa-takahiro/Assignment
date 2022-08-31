@@ -37,7 +37,7 @@ class Controller_Auth extends Controller
 
                 View::set_global('usr', $username);
                 // return View::forge('message/index');
-                Response::redirect('message/index');
+                Response::redirect('message/index/'.$username);
                 // return $view;
 
             } else {
