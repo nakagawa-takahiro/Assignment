@@ -6,8 +6,6 @@
 
 - 非同期処理
 
-<p>上2つについてはissuesにコメントしました。</p>
-
 [チャット画面(view)](/fuel/app/views/message/index.php)
 
 [チャット保存(controller)](/fuel/app/classes/controller/chat.php)
