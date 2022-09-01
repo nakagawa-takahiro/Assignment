@@ -2,28 +2,15 @@
 
 ## Review 用
 
-<p>8/31の成果です。</p>
+<p>9/1の成果です。</p>
 
-- issues(URL の指定方法)
-- issues(変数の宣言について)
-- issues(処理をまとめたい)
-- issues(メッセージの表示方法について)
+- 非同期処理
 
 <p>上2つについてはissuesにコメントしました。</p>
-<p>下2つについては動画を見て頂いたうえで、またレビューしてもらえると助かります。</p>
 
 [チャット画面(view)](/fuel/app/views/message/index.php)
 
 [チャット保存(controller)](/fuel/app/classes/controller/chat.php)
-
-<!-- [チャット画面(controller)](/fuel/app/classes/controller/message.php) -->
-
-[現状報告としてわかりやすいように動画を撮りました(音声ありです)](https://youtu.be/pOWiOGCalZM)
-
-お願いしたい項目(8/31)
-
-- code review
-- 別タブの表示内容もリアルタイムに変更させる方法
 
 <br>
 

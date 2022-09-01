@@ -5,26 +5,16 @@
 
 <h1>ログイン成功</h1>
 
-<!-- <div data-bind="foreach: { data: obj, as:'ob' }">
-    <span data-bind="text: ob['username']"></span> <span data-bind="text: ob['posted_at']"></span><br>
-    <span data-bind="text: ob['content']"></span><br>
+<div data-bind="foreach: message" >
+    <span data-bind="text: username"></span> <span data-bind="text: posted_at"></span><br>
+    <span data-bind="text: content"></span><br>
     <br>
-</div> -->
-
-<!-- <div data-bind="foreach: { data: chats, as:'chat' }">
-    <p data-bind="text: chat"></p>
-</div> -->
-
-
-<div data-bind="foreach: obj" >
-    <span data-bind="text: username"></span> <span data-bind="text: content"></span>
-    <br>    
 </div>
 
-
+<br>
 
 <form action="" method="post">
-    <input type="text" name="content">
+    <input type="text" name="content" data-bind='value: form, valueUpdate: "afterkeydown"'>
     <button onclick="submitForm();">送信</button>
 </form>
 
@@ -32,6 +22,7 @@
 
 
     function submitForm(){
+        event.preventDefault();
         let username = '<?php echo $loginUser; ?>';
         let content = $('input[name=content]').val();
         let formData = {
@@ -49,18 +40,15 @@
 
         }).done(function(data) {
             alert("成功");
-            // console.log("SUCCESS");
+            console.log("===========================================");
             console.log(data);
 
-            function chatPost() {
-                viewModel.username.push(data['username']);
-                viewModel.content.push(data['content']);
-            };
+            myViewModel.message.push(data);
+            myViewModel.form("");
 
 
         }).fail(function() {
             alert("失敗");
-            // console.log("FAILURE");
         });
     }
 
@@ -71,49 +59,18 @@
     ?>';
     console.log(json);
     
-    const obj = JSON.parse(json);
+    let obj = JSON.parse(json);
     console.log(obj);
 
     let chats = [];
 
-    obj.forEach(function(element){
-        // console.log(element['content']);
-        chats.push(element['content']);
 
-    });
-    console.log(chats);
+var myViewModel = {
+    message: ko.observableArray(obj),
+    form: ko.observable("")
+};
 
+ko.applyBindings(myViewModel);
 
-
-    let viewModel = {
-        username: ko.observableArray(""),
-        content: ko.observableArray("")
-    };
-
-    ko.applyBindings(viewModel);
-
-
-//     let items = chats;
-
-//     let SimpleListModel = function(chats) {
-        
-//         this.chats = ko.observableArray(chats);
-//         this.itemToAdd = ko.observable("");
-//         this.addItem = function() {
-//             if (this.itemToAdd() != "") {
-//                 this.chats.push(this.itemToAdd());
-//                 this.itemToAdd("");
-//             }
-//         }.bind(this);
-
-//     };
- 
-
-// ko.applyBindings(new SimpleListModel());
-
- 
-
-
-// ko.applyBindings({obj});
 
 </script>
