@@ -1,16 +1,16 @@
 # HR クラウド 内定者インターン課題
 
-## Review 用
-
-<p>9/1の成果です。</p>
+### 9/2 の成果
 
 - DB 処理の書き直し
 - CSRF 対策
--
+- メッセージの編集・削除機能実装
 
-[チャット画面(view)](/fuel/app/views/message/index.php)
+### よく使うファイルのリンク
 
-[チャット保存(controller)](/fuel/app/classes/controller/chat.php)
+[チャット画面(views/message/index.php)](/fuel/app/views/message/index.php)
+
+[チャット保存(controller/chat.php)](/fuel/app/classes/controller/chat.php)
 
 <br>
 

@@ -36,7 +36,6 @@ class Controller_Chat extends Controller_Rest
         $posted_at = $data['posted_at'];
 
         $res = array(
-            'success' => true,
             'id' => $id,
             'username' => $username,
             'content' => $message,
@@ -45,6 +44,45 @@ class Controller_Chat extends Controller_Rest
 
         return $this->response($res);
         // return $this->response($data, 200);
+    }
+
+    public function post_chat_delete()
+    {
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+        return $this->response($res);
+
+        endif;
+
+        $id = Input::post('id');
+        $result = DB::delete('messages')->where('id', $id)->execute();
+        $data = DB::select()->from('messages')->execute();
+        return $this->response($data);
+    }
+
+    public function post_chat_edit()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
+        $id = Input::post('id');
+        $message = Input::post('content');
+
+        $result = DB::update('messages')->value("content", $message)->where('id', $id)->execute();
+
+        $data = DB::select()->from('messages')->execute();
+        return $this->response($data);
+
     }
     
 }
