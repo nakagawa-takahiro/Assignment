@@ -9,30 +9,42 @@ class Controller_Chat extends Controller_Rest
 
     public function post_chat_post()
     {
+        $cc = Input::post('cc_token');
+        
+        // トークンチェック    
+        if (!\Security::check_token($cc)) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
         $username = Input::post('username');
         $message = Input::post('content');
 
-        DB::insert('messages')->set(array(
+        $insert = DB::insert('messages')->set([
 			'username' => "$username",
 			'content' => "$message",
-		))->execute();
+		])->execute();
 
-        $data = DB::select()->from('messages')->order_by('id','desc')->limit(1)->execute();
+        $data = DB::select()->from('messages')->where('id', $insert[0])->execute()->current();
 
-        foreach($data as $datum)
-        {
-            $id = $datum['id'];
-            $username = $datum['username'];
-            $content = $datum['content'];
-            $posted_at = $datum['posted_at'];
-        }
+        $id = $data['id'];
+        $username = $data['username'];
+        $content = $data['content'];
+        $posted_at = $data['posted_at'];
 
-        return $this->response(array(
+        $res = array(
+            'success' => true,
             'id' => $id,
             'username' => $username,
             'content' => $message,
-            'posted_at' => $posted_at)
+            'posted_at' => $posted_at
         );
+
+        return $this->response($res);
         // return $this->response($data, 200);
     }
     

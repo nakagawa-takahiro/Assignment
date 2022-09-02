@@ -113,17 +113,17 @@ return array(
 	 * Security settings
 	 */
 	'security' => array(
-		// 'csrf_autoload'            => false,
+		'csrf_autoload'            => false,
 		// 'csrf_autoload_methods'    => array('post', 'put', 'delete'),
 		// 'csrf_bad_request_on_fail' => false,
 		// 'csrf_auto_token'          => false,
-		// 'csrf_token_key'           => 'fuel_csrf_token',
-		// 'csrf_expiration'          => 0,
+		'csrf_token_key'           => 'fuel_csrf_token',
+		'csrf_expiration'          => 0,
 
 		/**
 		 * A salt to make sure the generated security tokens are not predictable
 		 */
-		// 'token_salt'            => 'put your salt value here to make the token more secure',
+		'token_salt'            => 'put your salt value here to make the token more secure',
 
 		/**
 		 * Allow the Input class to use X headers when present
@@ -188,18 +188,18 @@ return array(
 	/**
 	 * Cookie settings
 	 */
-	// 'cookie' => array(
+	'cookie' => array(
 		// Number of seconds before the cookie expires
-		// 'expiration'  => 0,
+		'expiration'  => 60*60*24,
 		// Restrict the path that the cookie is available to
-		// 'path'        => '/',
+		'path'        => '/',
 		// Restrict the domain that the cookie is available to
-		// 'domain'      => null,
+		'domain'      => null,
 		// Only transmit cookies over secure connections
-		// 'secure'      => false,
+		'secure'      => true,
 		// Only transmit cookies over HTTP, disabling Javascript access
-		// 'http_only'   => false,
-	// ),
+		'http_only'   => false,
+	),
 
 	/**
 	 * Validation settings
