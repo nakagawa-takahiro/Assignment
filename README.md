@@ -4,7 +4,9 @@
 
 <p>9/1の成果です。</p>
 
-- 非同期処理
+- DB 処理の書き直し
+- CSRF 対策
+-
 
 [チャット画面(view)](/fuel/app/views/message/index.php)
 

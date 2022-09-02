@@ -9,10 +9,9 @@ class Controller_Chat extends Controller_Rest
 
     public function post_chat_post()
     {
-        $cc = Input::post('cc_token');
         
         // トークンチェック    
-        if (!\Security::check_token($cc)) :
+        if (!\Security::check_token()) :
             $res = array(
             'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
         );
