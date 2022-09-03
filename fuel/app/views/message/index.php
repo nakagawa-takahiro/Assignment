@@ -19,7 +19,7 @@
     <h1><?php echo $channelname ?> <?php echo $loginUser ?></h1>
     <nav style="display: inline-block">
         <a href="/channel/index">チャンネル一覧</a>
-        <a href="#">ブックマーク一覧</a>
+        <a href="/bookmark/index">ブックマーク一覧</a>
         <a href="/auth/logout">ログアウト</a>
 
     </nav>
@@ -28,7 +28,8 @@
     <main style="padding: 1rem; margin-top: 2.5rem">
 
     <div id="message" data-bind="foreach: message" >
-        <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> <span data-bind="text: posted_at"></span><br>
+        <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
+        <span data-bind="text: posted_at"></span><br>
         <div style="border: solid black 1px; padding: 1rem">
             <span data-bind="text: content, value: content"></span>
         </div>
@@ -36,7 +37,8 @@
         <span>👎</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
         <a href="#" data-bind="click: $parent.editChat" style="padding-left: 1rem">編集</a>
         <a href="#" data-bind="click: $parent.deleteChat">削除</a>
-        <br>
+        <a href="#" data-bind="click: $parent.bookmark" style="padding-left: 20px">+ブックマークに追加</a><br>
+
         <br>
     </div>
 
@@ -61,13 +63,12 @@
 
 <script type="text/javascript">
 
-let json = 
-    '<?php
-      $json=json_encode($data);
-      echo $json;
-    ?>';
-    console.log(json);
-    
+    let json = 
+        '<?php
+        $json=json_encode($data);
+        echo $json;
+        ?>';
+        console.log(json);
     let obj = JSON.parse(json);
     console.log(obj);
 
@@ -76,10 +77,14 @@ let json =
         message: ko.observableArray(obj),
         form1: ko.observable(""),
         form2: ko.observable(""),
+        // res_good: ko.observable(""),
+        // res_bad: ko.observable(""),
         showEditForm: ko.observable(false),
-        showForm: ko.observable(true)
+        showForm: ko.observable(true),
+
     };
 
+    // submit chat section
 
     myViewModel.submitMessage = function (){
         event.preventDefault();
@@ -106,20 +111,15 @@ let json =
             console.log("===========================================");
             console.log(data);
 
-            myViewModel.message.push(data);
+            myViewModel.message(data);
             myViewModel.form1("");
-            // myViewModel.showEditForm(true);
-            // myViewModel.showForm(false);
-
 
         }).fail(function() {
             alert("失敗");
         });
     };
 
-
-
-
+    // delete chat section
 
     myViewModel.deleteChat = function(msg) {
 
@@ -157,7 +157,7 @@ let json =
 
     };
 
-    // let editChatId = 0;
+    // edit chat section
 
     myViewModel.editChat = function(msg) {
 
@@ -216,6 +216,8 @@ let json =
 
     }
 
+    // post good section
+
     myViewModel.postGood = function(msg) {
         event.preventDefault();
         let goodId = msg['id'];
@@ -255,6 +257,8 @@ let json =
 
     }
 
+    // post bad section
+
     myViewModel.postBad = function(msg) {
         event.preventDefault();
         let badId = msg['id'];
@@ -289,10 +293,44 @@ let json =
             alert("失敗");
         });
 
-
-
-
     }
+
+
+    // bookmark section
+
+    myViewModel.bookmark = function (msg){
+        event.preventDefault();
+        let id = msg['id'];
+        let bookmark = Math.abs(Number(msg['bookmark']) - 1);
+        let channelname = '<?php echo $channelname; ?>';
+        let formData = {
+            'id': id,
+            'bookmark': bookmark,
+            'channelname': channelname,
+            'cc_token': fuel_csrf_token()
+        };
+        console.log(formData);
+
+        $.ajax({
+            url: '<?php echo Uri::create('chat/bookmark.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            // alert("成功");
+            console.log("===========================================");
+            console.log(data);
+
+            myViewModel.message(data);
+            alert("ブックマークに登録しました。")
+
+        }).fail(function() {
+            alert("失敗");
+        });
+    };
+
 
     ko.applyBindings(myViewModel);
 

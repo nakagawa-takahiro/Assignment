@@ -16,28 +16,28 @@
     <h1><?php echo "Signed in as $loginUser"; ?></h1>    
     <nav style="display: inline-block">
             <a href="/channel/index">チャンネル一覧</a>
-            <a href="#">ブックマーク一覧</a>
+            <a href="/bookmark/index">ブックマーク一覧</a>
             <a href="/auth/logout">ログアウト</a>
         </nav>
 
     </header>
+    <main style="padding: 1rem; margin-top: 2.5rem">
+        <h1>チャンネル一覧</h1>
 
-    <h1>チャンネル選択画面</h1>
-    <?php echo "Signed in as $loginUser"; ?>
+        <div data-bind="foreach: channels" >
+            <a id="link" href="#" data-bind="click: moveToChannel, text: channelname, value: channelname"></a><br>
+        </div>
 
-    <div data-bind="foreach: channels" >
-        <a id="link" href="#" data-bind="click: moveToChannel, text: channelname, value: channelname"></a><br>
-    </div>
+        <!-- <a href="/message/index">message</a> -->
+        <div>
+            <p>チャンネルを追加</p>
+            <form method="POST" action="/channel/register/<?php echo $loginUser ?>">
+                <input type="text" name='channel' placeholder="登録するチャンネル名を入力してください。"><br>
+                <input type="submit" value="送信">
 
-    <!-- <a href="/message/index">message</a> -->
-    <div>
-        <p>チャンネルを追加</p>
-        <form method="POST" action="/channel/register/<?php echo $loginUser ?>">
-            チャンネル名:<input type="text" name='channel'><br>
-            <input type="submit" value="送信">
-
-        </form>
-    </div>
+            </form>
+        </div>
+    </main>
 
     <script type="text/javascript">
         let json = 

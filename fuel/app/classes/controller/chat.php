@@ -30,21 +30,22 @@ class Controller_Chat extends Controller_Rest
             'channelname' => "$channelname"
 		])->execute();
 
-        $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
+        // $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
+        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
 
-        $id = $data['id'];
-        $username = $data['username'];
-        $content = $data['content'];
-        $posted_at = $data['posted_at'];
+        // $id = $data['id'];
+        // $username = $data['username'];
+        // $content = $data['content'];
+        // $posted_at = $data['posted_at'];
 
-        $res = array(
-            'id' => $id,
-            'username' => $username,
-            'content' => $message,
-            'posted_at' => $posted_at
-        );
+        // $res = array(
+        //     'id' => $id,
+        //     'username' => $username,
+        //     'content' => $message,
+        //     'posted_at' => $posted_at
+        // );
 
-        return $this->response($res);
+        return $this->response($data);
         // return $this->response($data, 200);
     }
 
@@ -64,7 +65,6 @@ class Controller_Chat extends Controller_Rest
         ->where('id', $id)->execute();
         $data = DB::select()->from('message')
         ->where('channelname', $channelname)
-    	->and_where('id', $id)
         ->execute();
         return $this->response($data);
     }
@@ -130,6 +130,28 @@ class Controller_Chat extends Controller_Rest
         $id = Input::post('id');
         $res_bad = Input::post('res_bad');
         $result = DB::update('message')->value("res_bad", $res_bad)->where('id', $id)->execute();
+        $channelname = Input::post('channelname');
+        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        return $this->response($data);
+
+    }
+    
+    public function post_bookmark()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
+        $id = Input::post('id');
+        $bookmark = Input::post('bookmark');
+        $result = DB::update('message')->value("bookmark", $bookmark)->where('id', $id)->execute();
         $channelname = Input::post('channelname');
         $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
         return $this->response($data);
