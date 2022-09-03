@@ -22,13 +22,15 @@ class Controller_Chat extends Controller_Rest
 
         $username = Input::post('username');
         $message = Input::post('content');
+        $channelname = Input::post('channelname');
 
-        $insert = DB::insert('messages')->set([
+        $insert = DB::insert('message')->set([
 			'username' => "$username",
 			'content' => "$message",
+            'channelname' => "$channelname"
 		])->execute();
 
-        $data = DB::select()->from('messages')->where('id', $insert[0])->execute()->current();
+        $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
 
         $id = $data['id'];
         $username = $data['username'];
@@ -57,8 +59,13 @@ class Controller_Chat extends Controller_Rest
         endif;
 
         $id = Input::post('id');
-        $result = DB::delete('messages')->where('id', $id)->execute();
-        $data = DB::select()->from('messages')->execute();
+        $channelname = Input::post('channelname');
+        $result = DB::delete('message')
+        ->where('id', $id)->execute();
+        $data = DB::select()->from('message')
+        ->where('channelname', $channelname)
+    	->and_where('id', $id)
+        ->execute();
         return $this->response($data);
     }
 
@@ -77,10 +84,54 @@ class Controller_Chat extends Controller_Rest
 
         $id = Input::post('id');
         $message = Input::post('content');
+        $channelname = Input::post('channelname');
+        $result = DB::update('message')->value("content", $message)->where('id', $id)->execute();
 
-        $result = DB::update('messages')->value("content", $message)->where('id', $id)->execute();
+        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        return $this->response($data);
 
-        $data = DB::select()->from('messages')->execute();
+    }
+
+    public function post_post_good()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
+        $id = Input::post('id');
+        $res_good = Input::post('res_good');
+        $result = DB::update('message')->value("res_good", $res_good)->where('id', $id)->execute();
+        $channelname = Input::post('channelname');
+        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        return $this->response($data);
+
+    }
+
+    public function post_post_bad()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
+        $id = Input::post('id');
+        $res_bad = Input::post('res_bad');
+        $result = DB::update('message')->value("res_bad", $res_bad)->where('id', $id)->execute();
+        $channelname = Input::post('channelname');
+        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
         return $this->response($data);
 
     }

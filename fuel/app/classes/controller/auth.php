@@ -37,7 +37,7 @@ class Controller_Auth extends Controller
 
                 View::set_global('usr', $username);
                 // return View::forge('message/index');
-                Response::redirect('message/index/'.$username);
+                Response::redirect('channel/index');
                 // return $view;
 
             } else {
@@ -47,6 +47,15 @@ class Controller_Auth extends Controller
             }
         }
         return View::forge('auth/index');
+    }
+
+    public function action_logout()
+    {
+        $result = Auth::logout();
+        Response::redirect('auth/index');
+
+
+
     }
 
 }

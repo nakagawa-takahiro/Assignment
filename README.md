@@ -1,16 +1,24 @@
 # HR クラウド 内定者インターン課題
 
-### 9/2 の成果
+### 9/3 の成果
 
-- DB 処理の書き直し
-- CSRF 対策
-- メッセージの編集・削除機能実装
+- チャンネル一覧ページ作成
+- 個別チャット画面作成
+- good/bad 機能
+- DB 追加(channel)
+- DB 変更(message テーブルの column 追加)
+- URL でのログインユーザー名のやり取りから Auth::get_screen_name に変更
+- ログアウト機能
 
 ### よく使うファイルのリンク
 
 [チャット画面(views/message/index.php)](/fuel/app/views/message/index.php)
 
 [チャット保存(controller/chat.php)](/fuel/app/classes/controller/chat.php)
+
+[チャンネル一覧画面(views/channel/channel.php)](/fuel/app/views/channel/channel.php)
+
+[チャンネル追加(controller/channel.php)](fuel/app/classes/controller/channel.php)
 
 <br>
 
