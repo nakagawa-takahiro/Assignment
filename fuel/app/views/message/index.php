@@ -25,19 +25,19 @@
     </nav>
 
 </header>
-    <main style="padding: 1rem; margin-top: 2.5rem">
+    <main>
 
-    <div id="message" data-bind="foreach: message" >
+    <div id="message" data-bind="foreach: message" style="margin: 2rem">
         <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
         <span data-bind="text: posted_at"></span><br>
         <div style="border: solid black 1px; padding: 1rem">
-            <span data-bind="text: content, value: content"></span>
+            <span style="white-space: pre-line;" data-bind="text: content, value: content"></span>
         </div>
         <span>👍</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postGood, text: res_good, value: res_good"></a>
         <span>👎</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
         <a href="#" data-bind="click: $parent.editChat" style="padding-left: 1rem">編集</a>
         <a href="#" data-bind="click: $parent.deleteChat">削除</a>
-        <a href="#" data-bind="click: $parent.bookmark" style="padding-left: 20px">+ブックマークに追加</a><br>
+        <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark" style="padding-left: 20px"></a><br>
 
         <br>
     </div>
@@ -46,14 +46,13 @@
 
     <div style="position: fixed; bottom: 0px; width: 100%;">
     <form action="" method="post" data-bind="visible: showForm"  >
-        <input type="text" name="content1" data-bind='value: form1, valueUpdate: "afterkeydown"' placeholder="ここにメッセージを入力してください">
+        <textarea type="text" id="content1" data-bind='value: form1, valueUpdate: "afterkeydown"' placeholder="ここにメッセージを入力してください"></textarea>
         <button data-bind="click: submitMessage">送信</button>
     </form>
 
     <form action="" method="post" data-bind="visible: showEditForm">
-        
         <span>メッセージの編集中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
-        <input type="text" name="content2" data-bind='value: form2, valueUpdate: "afterkeydown"' placeholder="ここにメッセージを入力してください">
+        <textarea type="text" id="content2" data-bind='value: form2, valueUpdate: "afterkeydown"'></textarea>
         <button data-bind="click: submitNewMessage" >送信</button>
     </form>
     </div>
@@ -63,25 +62,20 @@
 
 <script type="text/javascript">
 
-    let json = 
-        '<?php
-        $json=json_encode($data);
+    let obj = 
+        <?php
+        $json=json_encode($data,JSON_PRETTY_PRINT);
         echo $json;
-        ?>';
-        console.log(json);
-    let obj = JSON.parse(json);
-    console.log(obj);
-
+        ?>;
+        console.log(obj);
 
     let myViewModel = {
         message: ko.observableArray(obj),
         form1: ko.observable(""),
         form2: ko.observable(""),
-        // res_good: ko.observable(""),
-        // res_bad: ko.observable(""),
         showEditForm: ko.observable(false),
         showForm: ko.observable(true),
-
+        stateBookmark: ko.observable('+ブックマークに追加')
     };
 
     // submit chat section
@@ -90,7 +84,7 @@
         event.preventDefault();
         let username = '<?php echo $loginUser; ?>';
         let channelname = '<?php echo $channelname; ?>';
-        let content = $('input[name=content1]').val();
+        let content = document.getElementById("content1").value;
         let formData = {
             'username': username,
             'content': content,
@@ -173,7 +167,8 @@
     myViewModel.submitNewMessage = function() {
         event.preventDefault();
             let id = editChatId;
-            let content = $('input[name=content2]').val();
+            let content = document.getElementById("content2").value;
+            // let content = $('input[name=content2]').val();
             let channelname = '<?php echo $channelname; ?>';
             
             let formData = {

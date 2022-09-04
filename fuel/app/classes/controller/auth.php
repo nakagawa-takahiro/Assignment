@@ -12,6 +12,12 @@ class Controller_Auth extends Controller
             $password = Input::post('password');
             $email = Input::post('mail');
             Auth::create_user($username, $password, $email, 1);
+            
+            DB::insert('channel')->set([
+                'channelname' => "$username",
+                'private' => 1
+            ])->execute();
+
             return View::forge('auth/index');
         }
         return View::forge('auth/index');

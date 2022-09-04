@@ -22,11 +22,12 @@ class Controller_Chat extends Controller_Rest
 
         $username = Input::post('username');
         $message = Input::post('content');
+        $messagenew = str_replace('\n', '\r\n', $message);
         $channelname = Input::post('channelname');
 
         $insert = DB::insert('message')->set([
 			'username' => "$username",
-			'content' => "$message",
+			'content' => "$messagenew",
             'channelname' => "$channelname"
 		])->execute();
 

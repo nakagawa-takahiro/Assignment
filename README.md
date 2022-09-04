@@ -11,6 +11,11 @@
 - ログアウト機能
 - ブックマーク機能
 
+### 9/4 の成果
+
+- 改行メッセージに対応
+- 自分専用のチャンネル作成
+
 ### よく使うファイルのリンク
 
 [チャット画面(views/message/index.php)](/fuel/app/views/message/index.php)
