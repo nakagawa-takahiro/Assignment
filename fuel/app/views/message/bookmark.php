@@ -39,14 +39,12 @@
 
 <script type="text/javascript">
 
-    let json = 
-        '<?php
-        $json=json_encode($data);
+let obj = 
+        <?php
+        $json=json_encode($data,JSON_PRETTY_PRINT);
         echo $json;
-        ?>';
-        console.log(json);
-    let obj = JSON.parse(json);
-    console.log(obj);
+        ?>;
+        console.log(obj);
 
     let myViewModel = {
         message: ko.observableArray(obj)

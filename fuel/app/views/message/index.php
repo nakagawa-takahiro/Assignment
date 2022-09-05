@@ -78,6 +78,15 @@
         stateBookmark: ko.observable('+ブックマークに追加')
     };
 
+    function getIndex(value, arr, prop) {
+        for(let i = 0; i < arr.length; i++) {
+            if(arr[i][prop] === value) {
+                return i;
+            }
+        }
+        return -1; //値が存在しなかったとき
+    }
+
     // submit chat section
 
     myViewModel.submitMessage = function (){
@@ -105,7 +114,8 @@
             console.log("===========================================");
             console.log(data);
 
-            myViewModel.message(data);
+            myViewModel.message.push(data);
+            myViewModel.message(myViewModel.message());
             myViewModel.form1("");
 
         }).fail(function() {
@@ -141,7 +151,11 @@
             console.log("===========================================");
             console.log(data);
 
-            myViewModel.message(data);
+            let index = getIndex(id, obj, 'id');
+            myViewModel.message.remove(myViewModel.message()[index]);
+            myViewModel.message(myViewModel.message());
+
+            // myViewModel.message(data);
             alert("メッセージを削除しました。")
 
         }).fail(function() {
@@ -163,6 +177,8 @@
         myViewModel.showForm(false);
 
     };
+
+
 
     myViewModel.submitNewMessage = function() {
         event.preventDefault();
@@ -189,9 +205,12 @@
             }).done(function(data) {
                 // alert("成功");
                 console.log("===========================================");
-                console.log(data);
+                console.log([data]);
 
-                myViewModel.message(data);
+                let index = getIndex(editChatId, obj, 'id');
+                myViewModel.message()[index] = data;
+                myViewModel.message(myViewModel.message());
+
                 myViewModel.form2("");
                 myViewModel.showEditForm(false);
                 myViewModel.showForm(true);
@@ -203,6 +222,7 @@
 
 
     }
+
     myViewModel.editStop = function() {
         myViewModel.form2("");
         myViewModel.showEditForm(false);
@@ -246,9 +266,6 @@
         }).fail(function() {
             alert("失敗");
         });
-
-
-
 
     }
 

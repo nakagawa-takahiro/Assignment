@@ -22,17 +22,15 @@ class Controller_Chat extends Controller_Rest
 
         $username = Input::post('username');
         $message = Input::post('content');
-        $messagenew = str_replace('\n', '\r\n', $message);
         $channelname = Input::post('channelname');
 
         $insert = DB::insert('message')->set([
 			'username' => "$username",
-			'content' => "$messagenew",
+			'content' => "$message",
             'channelname' => "$channelname"
 		])->execute();
 
-        // $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
-        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
 
         // $id = $data['id'];
         // $username = $data['username'];
@@ -62,11 +60,11 @@ class Controller_Chat extends Controller_Rest
 
         $id = Input::post('id');
         $channelname = Input::post('channelname');
-        $result = DB::delete('message')
-        ->where('id', $id)->execute();
-        $data = DB::select()->from('message')
-        ->where('channelname', $channelname)
-        ->execute();
+        // $result = DB::delete('message')
+        // ->where('id', $id)->execute();
+        // $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        $data = DB::select()->from('message')->where('id', $id)->execute()->current();
+
         return $this->response($data);
     }
 
@@ -88,7 +86,8 @@ class Controller_Chat extends Controller_Rest
         $channelname = Input::post('channelname');
         $result = DB::update('message')->value("content", $message)->where('id', $id)->execute();
 
-        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        $data = DB::select()->from('message')->where('id', $id)->execute()->current();
+
         return $this->response($data);
 
     }

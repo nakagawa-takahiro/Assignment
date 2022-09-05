@@ -1,20 +1,8 @@
 # HR クラウド 内定者インターン課題
 
-### 9/3 の成果
+### 9/5 の成果
 
-- チャンネル一覧ページ作成
-- 個別チャット画面作成
-- good/bad 機能
-- DB 追加(channel)
-- DB 変更(message テーブルの column 追加)
-- URL でのログインユーザー名のやり取りから Auth::get_screen_name に変更
-- ログアウト機能
-- ブックマーク機能
-
-### 9/4 の成果
-
-- 改行メッセージに対応
-- 自分専用のチャンネル作成
+-
 
 ### よく使うファイルのリンク
 
@@ -106,3 +94,5 @@
 ## <DB の設計>
 
 ※詳細はこちら (今後追加：8/29)
+
+### [データベース設計](https://docs.google.com/spreadsheets/d/1eardZKwNqOiGUFWTd6UJJSQfEZRKDcCcSSX4yI41e7E/edit?usp=sharing)
