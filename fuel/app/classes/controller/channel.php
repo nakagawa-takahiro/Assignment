@@ -6,7 +6,7 @@ class Controller_Channel extends Controller
     public function action_index()
     {
         $loginUser = Auth::get_screen_name();
-		$data = DB::select()->from('channel')->where('private', 0)->execute()->as_array();
+		$data = DB::select()->from('channel')->where('private', 0)->and_where('deleted_at', '0')->execute()->as_array();
         $private = DB::select()->from('channel')->where('channelname', $loginUser)->execute()->as_array();
         $data['data'] = array_merge($data, $private);
         $data['user'] = Arr::get(Auth::get_user_id(),1);

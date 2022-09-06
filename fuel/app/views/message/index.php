@@ -259,9 +259,10 @@
         }).done(function(data) {
             // alert("成功");
             console.log("===========================================");
-            console.log(data);
+            let index = getIndex(goodId, obj, 'id');
+            myViewModel.message()[index] = data;
+            myViewModel.message(myViewModel.message());
 
-            myViewModel.message(data);
 
         }).fail(function() {
             alert("失敗");
@@ -298,8 +299,9 @@
             // alert("成功");
             console.log("===========================================");
             console.log(data);
-
-            myViewModel.message(data);
+            let index = getIndex(badId, obj, 'id');
+            myViewModel.message()[index] = data;
+            myViewModel.message(myViewModel.message());
 
         }).fail(function() {
             alert("失敗");
@@ -312,13 +314,10 @@
 
     myViewModel.bookmark = function (msg){
         event.preventDefault();
-        let id = msg['id'];
-        let bookmark = Math.abs(Number(msg['bookmark']) - 1);
-        let channelname = '<?php echo $channelname; ?>';
+        let message_id = msg['id'];
+        // let bookmark = Math.abs(Number(msg['bookmark']) - 1);
         let formData = {
-            'id': id,
-            'bookmark': bookmark,
-            'channelname': channelname,
+            'message_id': message_id,
             'cc_token': fuel_csrf_token()
         };
         console.log(formData);
@@ -335,7 +334,7 @@
             console.log("===========================================");
             console.log(data);
 
-            myViewModel.message(data);
+            // myViewModel.message(data);
             alert("ブックマークに登録しました。")
 
         }).fail(function() {

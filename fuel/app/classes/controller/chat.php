@@ -1,7 +1,5 @@
 <?php
 
-// ===============================================
-
 class Controller_Chat extends Controller_Rest
 {
     
@@ -17,35 +15,15 @@ class Controller_Chat extends Controller_Rest
         );
 
         return $this->response($res);
-
         endif;
 
         $username = Input::post('username');
         $message = Input::post('content');
         $channelname = Input::post('channelname');
 
-        $insert = DB::insert('message')->set([
-			'username' => "$username",
-			'content' => "$message",
-            'channelname' => "$channelname"
-		])->execute();
-
-        $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
-
-        // $id = $data['id'];
-        // $username = $data['username'];
-        // $content = $data['content'];
-        // $posted_at = $data['posted_at'];
-
-        // $res = array(
-        //     'id' => $id,
-        //     'username' => $username,
-        //     'content' => $message,
-        //     'posted_at' => $posted_at
-        // );
+        $data = Model_Message::insert_message($username, $message, $channelname);
 
         return $this->response($data);
-        // return $this->response($data, 200);
     }
 
     public function post_chat_delete()
@@ -55,15 +33,12 @@ class Controller_Chat extends Controller_Rest
             'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
         );
         return $this->response($res);
-
         endif;
 
         $id = Input::post('id');
-        $channelname = Input::post('channelname');
-        // $result = DB::delete('message')
-        // ->where('id', $id)->execute();
-        // $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
-        $data = DB::select()->from('message')->where('id', $id)->execute()->current();
+        $deleted_at = date('Y-m-d H:i:s');
+        
+        $data = Model_Message::delete_message($id, $deleted_at);
 
         return $this->response($data);
     }
@@ -78,15 +53,12 @@ class Controller_Chat extends Controller_Rest
         );
 
         return $this->response($res);
-
         endif;
 
         $id = Input::post('id');
-        $message = Input::post('content');
-        $channelname = Input::post('channelname');
-        $result = DB::update('message')->value("content", $message)->where('id', $id)->execute();
+        $content = Input::post('content');
 
-        $data = DB::select()->from('message')->where('id', $id)->execute()->current();
+        $data = Model_Message::edit_message($id, $content);
 
         return $this->response($data);
 
@@ -107,9 +79,9 @@ class Controller_Chat extends Controller_Rest
 
         $id = Input::post('id');
         $res_good = Input::post('res_good');
-        $result = DB::update('message')->value("res_good", $res_good)->where('id', $id)->execute();
-        $channelname = Input::post('channelname');
-        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        
+        $data = Model_Message::click_like($id, $res_good);
+
         return $this->response($data);
 
     }
@@ -129,9 +101,9 @@ class Controller_Chat extends Controller_Rest
 
         $id = Input::post('id');
         $res_bad = Input::post('res_bad');
-        $result = DB::update('message')->value("res_bad", $res_bad)->where('id', $id)->execute();
-        $channelname = Input::post('channelname');
-        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
+        
+        $data = Model_Message::click_dislike($id, $res_bad);
+
         return $this->response($data);
 
     }
@@ -149,12 +121,16 @@ class Controller_Chat extends Controller_Rest
 
         endif;
 
-        $id = Input::post('id');
-        $bookmark = Input::post('bookmark');
-        $result = DB::update('message')->value("bookmark", $bookmark)->where('id', $id)->execute();
-        $channelname = Input::post('channelname');
-        $data = DB::select()->from('message')->where('channelname', $channelname)->execute();
-        return $this->response($data);
+        $message_id = Input::post('message_id');
+        $username = Auth::get_screen_name();
+        $insert = DB::insert('bookmark')->set([
+            'username' => $username,
+            'message_id' => $message_id,
+        ])->execute();
+
+        // $data = DB::select(message_id)->from('bookmark')->where('username', $username)->execute();
+        
+        // return $this->response($data);
 
     }
     
