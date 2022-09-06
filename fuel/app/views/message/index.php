@@ -23,12 +23,21 @@
         <a href="/auth/logout">ログアウト</a>
 
     </nav>
+    <p style="color: black">フィルター🔍</p>
+        <form>
+            <input type="text" data-bind='value: stringValue, valueUpdate: "afterkeydown"' placeholder="検索したい文字列を入力してください">
+        </form>
+    </div>
 
 </header>
     <main>
 
+    <div style="width: 100%;">
+
+
     <div id="message" data-bind="foreach: message" style="margin: 2rem">
-        <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
+    <div data-bind="visible: $parent.isVisible($data)">
+    <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
         <span data-bind="text: posted_at"></span><br>
         <div style="border: solid black 1px; padding: 1rem">
             <span style="white-space: pre-line;" data-bind="text: content, value: content"></span>
@@ -40,6 +49,8 @@
         <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark" style="padding-left: 20px"></a><br>
 
         <br>
+    </div>
+
     </div>
 
     <br>
@@ -62,22 +73,6 @@
 
 <script type="text/javascript">
 
-    let obj = 
-        <?php
-        $json=json_encode($data,JSON_PRETTY_PRINT);
-        echo $json;
-        ?>;
-        console.log(obj);
-
-    let myViewModel = {
-        message: ko.observableArray(obj),
-        form1: ko.observable(""),
-        form2: ko.observable(""),
-        showEditForm: ko.observable(false),
-        showForm: ko.observable(true),
-        stateBookmark: ko.observable('+ブックマークに追加')
-    };
-
     function getIndex(value, arr, prop) {
         for(let i = 0; i < arr.length; i++) {
             if(arr[i][prop] === value) {
@@ -85,7 +80,37 @@
             }
         }
         return -1; //値が存在しなかったとき
-    }
+    };
+
+    let obj = 
+        <?php
+        $json=json_encode($data,JSON_PRETTY_PRINT);
+        echo $json;
+        ?>;
+        // console.log(obj);
+
+    let myViewModel = {
+        stringValue: ko.observable(""),
+        isVisible: function(data) {
+
+            let filter;
+            if(myViewModel.stringValue() == ""){
+                filter = true;
+            }else if(data.content.includes(myViewModel.stringValue()) && myViewModel.stringValue() != ""){
+                filter = true;
+            }else{
+                filter = false;
+            };
+
+            return filter;
+        },
+        message: ko.observableArray(obj),
+        form1: ko.observable(""),
+        form2: ko.observable(""),
+        showEditForm: ko.observable(false),
+        showForm: ko.observable(true),
+        stateBookmark: ko.observable('+ブックマークに追加')
+    };
 
     // submit chat section
 
