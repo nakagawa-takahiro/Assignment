@@ -133,6 +133,60 @@ class Controller_Chat extends Controller_Rest
         // return $this->response($data);
 
     }
+
+    public function post_chat_comment()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
+        $chat_id = Input::post('chat_id');
+        // $username = Auth::get_screen_name();
+        // $insert = DB::insert('bookmark')->set([
+        //     'username' => $username,
+        //     'message_id' => $message_id,
+        // ])->execute();
+
+        $data = DB::select()->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
+        
+        return $this->response($data);
+
+    }
+   
+    public function post_comment_post()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
+        $chat_id = Input::post('chat_id');
+        $commented_by = Input::post('commented_by');
+        $comment_content = Input::post('comment_content');
+        $insert = DB::insert('comment')->set([
+            'chat_id' => $chat_id,
+            'commented_by' => $commented_by,
+            'comment_content' => $comment_content,
+        ])->execute();
+
+        $data = DB::select()->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
+        
+        return $this->response($data);
+
+    }
     
 }
 

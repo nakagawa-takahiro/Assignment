@@ -35,25 +35,35 @@
     <div style="width: 100%;">
 
 
-    <div id="message" data-bind="foreach: message" style="margin: 2rem">
-    <div data-bind="visible: $parent.isVisible($data)">
-    <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
-        <span data-bind="text: posted_at"></span><br>
-        <div style="border: solid black 1px; padding: 1rem">
-            <span style="white-space: pre-line;" data-bind="text: content, value: content"></span>
-        </div>
-        <span>👍</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postGood, text: res_good, value: res_good"></a>
-        <span>👎</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
-        <a href="#" data-bind="click: $parent.editChat" style="padding-left: 1rem">編集</a>
-        <a href="#" data-bind="click: $parent.deleteChat">削除</a>
-        <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark" style="padding-left: 20px"></a><br>
+    <div id="message" data-bind="foreach: message" style="margin: 3rem;">
+        <div data-bind="visible: $parent.isVisible($data)" style="padding-top: 3rem; border-top: solid black 1px;">
+            <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
+            <span data-bind="text: posted_at"></span><br>
+            <div style="border: solid black 1px; padding: 1rem">
+                <span style="white-space: pre-line;" data-bind="text: content, value: content"></span>
+            </div>
+            <span>👍</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postGood, text: res_good, value: res_good"></a>
+            <span>👎</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
+            <a href="#" data-bind="click: $parent.editChat" style="padding-left: 1rem">編集</a>
+            <a href="#" data-bind="click: $parent.deleteChat">削除</a>
+            <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark" style="padding-left: 20px"></a><br>
+            <br>
+            <details>
+            <summary data-bind="click: $parent.showComments" >スレッドを表示</summary>    
+            <div data-bind="foreach: $parent.chats">
+            <span data-bind="text: commented_by"></span><br>
+            <span data-bind="text: comment_content"></span><br><br>
+            </div>
+            <a href="" data-bind="click: $parent.comment">コメントを追加する</a>
 
-        <br>
-    </div>
+            </details>
+        </div>
 
     </div>
 
     <br>
+
+
 
     <div style="position: fixed; bottom: 0px; width: 100%;">
     <form action="" method="post" data-bind="visible: showForm"  >
@@ -66,6 +76,13 @@
         <textarea type="text" id="content2" data-bind='value: form2, valueUpdate: "afterkeydown"'></textarea>
         <button data-bind="click: submitNewMessage" >送信</button>
     </form>
+
+    <form action="" method="post" data-bind="visible: showCommentForm">
+        <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
+        <textarea type="text" id="comment" placeholder="aaaaaaaaaaa"></textarea>
+        <button data-bind="click: submitComment">送信</button>
+    </form>
+
     </div>
 
     </main>
@@ -88,9 +105,16 @@
         echo $json;
         ?>;
         // console.log(obj);
+    
+    let comments = 
+        <?php
+        $json=json_encode($comment,JSON_PRETTY_PRINT);
+        echo $json;
+        ?>;
 
     let myViewModel = {
         stringValue: ko.observable(""),
+        showComments: ko.observable(""),
         isVisible: function(data) {
 
             let filter;
@@ -105,12 +129,115 @@
             return filter;
         },
         message: ko.observableArray(obj),
+        chats: ko.observableArray(comments),
+
+        // commentVisible: function(data1, data2) {
+        //     let filter;
+            
+        //     console.log(data1,data2);
+        //     console.log("========================================");
+            
+        //     if(data2.chat_id == data1.id){
+        //         filter = true;
+        //     }else{
+        //         filter = false;
+        //     };
+
+        //     return filter;
+
+        // },
         form1: ko.observable(""),
         form2: ko.observable(""),
         showEditForm: ko.observable(false),
+        showCommentForm: ko.observable(false),
         showForm: ko.observable(true),
         stateBookmark: ko.observable('+ブックマークに追加')
     };
+
+    // submit comment section
+    myViewModel.submitComment = function() {
+        event.preventDefault();
+        // console.log(data);
+        // console.log(message_id);
+        let username = '<?php echo $loginUser; ?>';
+        let content = document.getElementById("comment").value;
+        let formData = {
+            'chat_id': message_id,
+            'commented_by': username,
+            'comment_content': content,
+            'cc_token': fuel_csrf_token()
+        };
+        console.log(formData);
+        // console.log(myViewModel.chats()[1]);
+        $.ajax({
+            url: '<?php echo Uri::create('chat/comment_post.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            alert("成功");
+            console.log("===========================================");
+            console.log(data);
+
+            myViewModel.chats(data);
+            myViewModel.chats(myViewModel.chats());
+
+        }).fail(function() {
+            alert("失敗");
+        });
+
+    };
+
+    // show comments section
+    myViewModel.showComments = function(details) {
+        // document.getElementById("detail").removeAttribute("open");
+        // document.getElementById("detail").setAttribute("open", "false");
+        let chats=[];
+        myViewModel.chats(chats);
+        myViewModel.chats(myViewModel.chats());
+
+        console.log(details);
+        let chat_id = details.id;
+        let formData = {
+            'chat_id': chat_id,
+            'cc_token': fuel_csrf_token()
+        };
+        $.ajax({
+            url: '<?php echo Uri::create('chat/chat_comment.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            // alert("成功");
+            console.log("===========================================");
+            // console.log(data);
+
+            myViewModel.chats(data);
+            myViewModel.chats(myViewModel.chats());
+
+        }).fail(function() {
+            alert("失敗");
+        });
+        return true;
+        
+    }
+
+    let message_id;
+
+    myViewModel.comment = function(msg) {
+        console.log(msg);
+        message_id = msg['id'];
+
+        event.preventDefault();
+        myViewModel.showCommentForm(true);
+        myViewModel.showEditForm(false);
+        myViewModel.showForm(false);
+
+        };
 
     // submit chat section
 
@@ -137,7 +264,7 @@
         }).done(function(data) {
             // alert("成功");
             console.log("===========================================");
-            console.log(data);
+            // console.log(data);
 
             myViewModel.message.push(data);
             myViewModel.message(myViewModel.message());
@@ -198,6 +325,7 @@
         // console.log(editChatId);
         event.preventDefault();
         myViewModel.form2(msg['content']);
+        myViewModel.showCommentForm(false);
         myViewModel.showEditForm(true);
         myViewModel.showForm(false);
 
@@ -251,6 +379,7 @@
     myViewModel.editStop = function() {
         myViewModel.form2("");
         myViewModel.showEditForm(false);
+        myViewModel.showCommentForm(false);
         myViewModel.showForm(true);
         alert("メッセージの編集を中断しました。")
 

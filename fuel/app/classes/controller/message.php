@@ -10,6 +10,7 @@ class Controller_Message extends Controller
         $data['user'] = Arr::get(Auth::get_user_id(),1);
         $data['loginUser'] = Auth::get_screen_name();
         $data['channelname'] = $channelname;
+		$data['comment'] = DB::select()->from('comment')->where('deleted_at', '0')->execute()->as_array();
         // $data['loginUser'] = $loginUser;
         return View::forge('message/index', $data);
 
