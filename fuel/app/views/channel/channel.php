@@ -102,6 +102,7 @@
             let url = '<?php echo Uri::create('message/index/'); ?>'+channel.channelname;
             link.setAttribute('href', url);
             window.location.href = url;
+
         };
 
         myViewModel.addChannel = function() {

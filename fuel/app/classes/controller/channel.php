@@ -21,7 +21,8 @@ class Controller_Channel extends Controller
             $data = DB::select()->from('channel')
             ->where('open', 0)->and_where('deleted_at', '0')
             ->execute()->as_array();
-        }
+        };
+        
 
 
         

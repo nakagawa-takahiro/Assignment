@@ -108,7 +108,7 @@ class Controller_Chat extends Controller_Rest
 
     }
     
-    public function post_bookmark()
+    public function post_bookmark_create()
     {
         
         // トークンチェック    
@@ -121,16 +121,65 @@ class Controller_Chat extends Controller_Rest
 
         endif;
 
-        $message_id = Input::post('message_id');
+        $message_id = Input::post('id');
         $username = Auth::get_screen_name();
         $insert = DB::insert('bookmark')->set([
             'username' => $username,
             'message_id' => $message_id,
         ])->execute();
 
-        // $data = DB::select(message_id)->from('bookmark')->where('username', $username)->execute();
+        $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
         
-        // return $this->response($data);
+        return $this->response($data);
+
+    }
+    public function post_bookmark_recreate()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+        $username = Auth::get_screen_name();
+
+        $bookmark_id = Input::post('id');
+        $bookmark_state = Input::post('bookmark_state');
+        
+        DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('id', $bookmark_id)->execute();
+
+        $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
+        
+        return $this->response($data);
+
+    }
+
+       
+    public function post_bookmark_delete()
+    {
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+        $username = Auth::get_screen_name();
+
+        $bookmark_id = Input::post('id');
+        $bookmark_state = Input::post('bookmark_state');
+        
+        DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('id', $bookmark_id)->execute();
+
+        $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
+        
+        return $this->response($data);
 
     }
 

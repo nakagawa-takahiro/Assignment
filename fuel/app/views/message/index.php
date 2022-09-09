@@ -24,17 +24,22 @@
 
     </nav>
 
+    <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility" style="color: black">
+        チャンネル名を変更:
+        <input type="text" id="newChannelname" placeholder="新しいチャンネル名を入力してください">
+        <button data-bind="click: editChannelname">送信</button>
+    </form>
     <form method="POST" action="" name="channelSettings" data-bind="visible: channelSettingsFormVisibility" style="color: black">
         チャンネルの公開範囲:<select name="number">
             <option value="1">public</option>
             <option value="2">private</option>
-        </select><br>
+        </select>
         <button data-bind="click: editChannel">完了</button>
     </form>
     <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility" style="color: black">
     ユーザーを招待する:
             <select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'">
-            </select><br>
+            </select>
         <button data-bind="click: inviteUser">送信</button>
     </form>
 
@@ -63,7 +68,7 @@
             <span>👎</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
             <a href="#" data-bind="click: $parent.editChat" style="padding-left: 1rem">編集</a>
             <a href="#" data-bind="click: $parent.deleteChat">削除</a>
-            <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark" style="padding-left: 20px"></a><br>
+            <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark($data)" style="padding-left: 15px"></a><br>
             <br>
             <details id="detail">
             <summary data-bind="click: $parent.showComments" >スレッドを表示</summary>    
@@ -138,13 +143,20 @@
         $json=json_encode($data,JSON_PRETTY_PRINT);
         echo $json;
         ?>;
-        // console.log(obj);
     
     let comments = 
         <?php
         $json=json_encode($comment,JSON_PRETTY_PRINT);
         echo $json;
         ?>;
+    
+    let bookmarks = 
+        <?php
+        $json=json_encode($bookmark,JSON_PRETTY_PRINT);
+        echo $json;
+        ?>;
+        let bookmark_user = bookmarks.map(element => element.username);
+        let bookmark_id = bookmarks.map(element => element.message_id);
 
     let myViewModel = {
         stringValue: ko.observable(""),
@@ -176,6 +188,7 @@
         message: ko.observableArray(obj),
         chats: ko.observableArray(comments),
         users: ko.observableArray(users),
+        bookmarks: ko.observableArray(bookmarks),
         selectedUser: ko.observable(),
 
         // commentVisible: function(data1, data2) {
@@ -198,7 +211,14 @@
         showEditForm: ko.observable(false),
         showCommentForm: ko.observable(false),
         showForm: ko.observable(true),
-        stateBookmark: ko.observable('+ブックマークに追加'),
+        stateBookmark: function(state) {
+            if(bookmark_user.includes(state.username) && bookmark_id.includes(state.id)) {
+                return "-ブックマークから削除";
+            }else{
+                return "+ブックマークに追加";
+            }
+        },
+        
         mention_to: function(isOpen) {
             // console.log(isOpen);
                 let mention;
@@ -213,6 +233,37 @@
 
     myViewModel.showChannelSettings = function() {
             myViewModel.channelSettingsFormVisibility(!myViewModel.channelSettingsFormVisibility());
+        };
+    
+    myViewModel.editChannelname = function() {
+        event.preventDefault();
+        let newChannelname = document.getElementById("newChannelname").value;
+        let channelname = '<?php echo $channelname ?>';
+
+        let formData = {
+            'newChannelname': newChannelname,
+            'channelname': channelname,
+            'cc_token': fuel_csrf_token()
+        };
+        console.log(formData);
+
+        $.ajax({
+            url: '<?php echo Uri::create('register/edit_channelname.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            alert("新しいチャンネルに移動します。");
+            console.log("===========================================");
+            console.log(data);
+            let url = '<?php echo Uri::create('message/index/'); ?>'+data;
+            window.location.href = url;
+
+        }).fail(function() {
+            alert("失敗");
+        });
     };
 
     myViewModel.editChannel = function() {
@@ -244,36 +295,36 @@
 
         };
 
-        myViewModel.inviteUser = function() {
+    myViewModel.inviteUser = function() {
 
-            event.preventDefault();
+        event.preventDefault();
 
-            let invite_user = myViewModel.selectedUser();
-            let formData = {
-                'invited_user': invite_user,
-                'channel_id': channelData.id,
-                'cc_token': fuel_csrf_token()
-            };
-            console.log(formData);
-            console.log(myViewModel.chats()[1]);
-            $.ajax({
-                url: '<?php echo Uri::create('register/invite.json'); ?>',
-                type: 'POST',
-                cache: false,
-                dataType : 'json',
-                data: formData,
-
-            }).done(function(data) {
-                alert("成功");
-                console.log("===========================================");
-                console.log(data);
-                // myViewModel.channels(data);
-
-            }).fail(function() {
-                alert("失敗");
-            });
-
+        let invite_user = myViewModel.selectedUser();
+        let formData = {
+            'invited_user': invite_user,
+            'channel_id': channelData.id,
+            'cc_token': fuel_csrf_token()
         };
+        console.log(formData);
+        console.log(myViewModel.chats()[1]);
+        $.ajax({
+            url: '<?php echo Uri::create('register/invite.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            alert("成功");
+            console.log("===========================================");
+            console.log(data);
+            // myViewModel.channels(data);
+
+        }).fail(function() {
+            alert("失敗");
+        });
+
+    };
 
     // submit comment section
     myViewModel.submitComment = function() {
@@ -284,7 +335,7 @@
         }else{
             mention_to = myViewModel.selectedUser();
         };
-        console.log(mention_to);
+        // console.log(mention_to);
 
         let username = '<?php echo $loginUser; ?>';
         let channelname = '<?php echo $channelname; ?>';
@@ -601,16 +652,40 @@
 
     myViewModel.bookmark = function (msg){
         event.preventDefault();
-        let message_id = msg['id'];
+        let id;
+        let url;
+        let bookmark = bookmarks.find(element => element.message_id == msg.id && element.username == msg.username);
+        let bookmark_state;
+        let alertmsg;
+        console.log(bookmark);
+
+        if(typeof bookmark == "undefined"){
+            bookmark_state = "0";
+            id = msg.id;
+            url = '<?php echo Uri::create('chat/bookmark_create.json'); ?>';
+            alertmsg = "ブックマークに登録しました。";
+        }else if(bookmark.deleted_at != "0") {
+            bookmark_state = "0";
+            id = bookmark.id;
+            url = '<?php echo Uri::create('chat/bookmark_recreate.json'); ?>';
+            alertmsg = "ブックマークに登録しました。";
+        }else{
+            bookmark_state = '<?php echo date('Y-m-d H:i:s') ?>';
+            id = bookmark.id;
+            url = '<?php echo Uri::create('chat/bookmark_delete.json'); ?>';
+            alertmsg = "ブックマークから削除しました。";
+        }
         // let bookmark = Math.abs(Number(msg['bookmark']) - 1);
+
         let formData = {
-            'message_id': message_id,
+            'bookmark_state': bookmark_state,
+            'id': id,
             'cc_token': fuel_csrf_token()
         };
         console.log(formData);
 
         $.ajax({
-            url: '<?php echo Uri::create('chat/bookmark.json'); ?>',
+            url: url,
             type: 'POST',
             cache: false,
             dataType : 'json',
@@ -621,8 +696,9 @@
             console.log("===========================================");
             console.log(data);
 
-            // myViewModel.message(data);
-            alert("ブックマークに登録しました。")
+            myViewModel.bookmarks(data);
+            myViewModel.bookmarks(myViewModel.bookmarks());
+            alert(alertmsg);
 
         }).fail(function() {
             alert("失敗");

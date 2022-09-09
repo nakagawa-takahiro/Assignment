@@ -62,6 +62,45 @@ class Controller_Register extends Controller_Rest
 
     }
 
+    public function post_edit_channelname()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+        endif;
+
+        $channelname = Input::post('channelname');
+        $newchannelname = Input::post('newChannelname');
+
+        $result1 = DB::select('id')->from('channel')->where('channelname', $channelname)->execute()->as_array();
+        $result2 = DB::select('id')->from('message')->where('channelname', $channelname)->execute()->as_array();
+        $result3 = DB::select('id')->from('comment')->where('channelname', $channelname)->execute()->as_array();
+
+        if(count($result1) != "0") {
+            DB::update('channel')->value("channelname", $newchannelname)->where('id', 'in', $result1)->execute();
+        }
+
+        if(count($result2) != "0") {
+            DB::update('message')->value("channelname", $newchannelname)->where('id', 'in', $result2)->execute();
+        }    
+        
+        if(count($result3) != "0") {
+            DB::update('comment')->value("channelname", $newchannelname)->where('id', 'in', $result3)->execute();
+        }
+
+        return $this->response($newchannelname);
+
+
+        // Response::redirect('message/index'.$newchannelname);
+
+    }
+
+
     public function post_invite()
     {
         

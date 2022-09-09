@@ -30,7 +30,7 @@
             <div style="border: solid black 1px; padding: 1rem">
                 <span data-bind="text: content, value: content"></span>
             </div>
-            
+            <a href="">ブックマークから削除する</a>
             <br>
         </div>
     </main>
