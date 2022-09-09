@@ -7,7 +7,6 @@
     <title>Document</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-
     <script src="https://code.jquery.com/jquery-1.8.3.js" integrity="sha256-dW19+sSjW7V1Q/Z3KD1saC6NcE5TUIhLJzJbrdKzxKc=" crossorigin="anonymous"></script>
     <?php echo \Security::js_fetch_token(); ?>
     <?php echo Asset::css('style.css'); ?>
@@ -20,9 +19,27 @@
     <nav style="display: inline-block">
         <a href="/channel/index">チャンネル一覧</a>
         <a href="/bookmark/index">ブックマーク一覧</a>
+        <a href="" data-bind="click: showChannelSettings, text: channelSettings, visible: channelSettingsVisibility()"></a>
         <a href="/auth/logout">ログアウト</a>
 
     </nav>
+
+    <form method="POST" action="" name="channelSettings" data-bind="visible: channelSettingsFormVisibility" style="color: black">
+        チャンネルの公開範囲:<select name="number">
+            <option value="1">public</option>
+            <option value="2">private</option>
+        </select><br>
+        <button data-bind="click: editChannel">完了</button>
+    </form>
+    <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility" style="color: black">
+    ユーザーを招待する:
+            <select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'">
+            </select><br>
+        <button data-bind="click: inviteUser">送信</button>
+    </form>
+
+
+
     <p style="color: black">フィルター🔍</p>
         <form>
             <input type="text" data-bind='value: stringValue, valueUpdate: "afterkeydown"' placeholder="検索したい文字列を入力してください">
@@ -48,7 +65,7 @@
             <a href="#" data-bind="click: $parent.deleteChat">削除</a>
             <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark" style="padding-left: 20px"></a><br>
             <br>
-            <details>
+            <details id="detail">
             <summary data-bind="click: $parent.showComments" >スレッドを表示</summary>    
             <div data-bind="foreach: $parent.chats">
             <span data-bind="text: commented_by"></span><br>
@@ -79,7 +96,7 @@
 
     <form action="" method="post" data-bind="visible: showCommentForm">
         <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
-        <textarea type="text" id="comment" placeholder="aaaaaaaaaaa"></textarea>
+        <textarea type="text" id="comment" placeholder="コメントを入力してください"></textarea>
         <button data-bind="click: submitComment">送信</button>
     </form>
 
@@ -89,6 +106,22 @@
 </body>
 
 <script type="text/javascript">
+    let channelData = 
+        <?php
+        $json=json_encode($channelData,JSON_PRETTY_PRINT);
+        echo $json;
+    ?>;
+    
+    let usersObj = 
+        <?php
+        $json=json_encode($users,JSON_PRETTY_PRINT);
+        echo $json;
+    ?>;
+    // console.log(usersObj);
+    let users = usersObj.map(function(item) {
+        return item.username
+    });
+    console.log(users);
 
     function getIndex(value, arr, prop) {
         for(let i = 0; i < arr.length; i++) {
@@ -115,6 +148,17 @@
     let myViewModel = {
         stringValue: ko.observable(""),
         showComments: ko.observable(""),
+        channelSettings: ko.observable("チャンネル設定"),
+        channelSettingsFormVisibility: ko.observable(false),
+        channelSettingsVisibility: function() {
+            let visible;
+            if(channelData.owner == '<?php echo $loginUser ?>') {
+                visible = true;
+            }else{
+                visible = false;
+            };
+            return visible;
+        },
         isVisible: function(data) {
 
             let filter;
@@ -130,6 +174,8 @@
         },
         message: ko.observableArray(obj),
         chats: ko.observableArray(comments),
+        users: ko.observableArray(users),
+        selectedUser: ko.observable(),
 
         // commentVisible: function(data1, data2) {
         //     let filter;
@@ -153,6 +199,70 @@
         showForm: ko.observable(true),
         stateBookmark: ko.observable('+ブックマークに追加')
     };
+
+    myViewModel.showChannelSettings = function() {
+            myViewModel.channelSettingsFormVisibility(!myViewModel.channelSettingsFormVisibility());
+    };
+
+    myViewModel.editChannel = function() {
+
+        event.preventDefault();
+
+        let channel_visibility = document.channelSettings.number;
+        let num = channel_visibility.selectedIndex;
+        let formData = {
+            'open': num,
+            'channel_id': channelData.id,
+            'cc_token': fuel_csrf_token()
+        };
+        $.ajax({
+            url: '<?php echo Uri::create('register/edit.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            alert("成功");
+            console.log("===========================================");
+            console.log(data);
+
+        }).fail(function() {
+            alert("失敗");
+        });
+
+        };
+
+        myViewModel.inviteUser = function() {
+
+            event.preventDefault();
+
+            let invite_user = myViewModel.selectedUser();
+            let formData = {
+                'invited_user': invite_user,
+                'channel_id': channelData.id,
+                'cc_token': fuel_csrf_token()
+            };
+            console.log(formData);
+            console.log(myViewModel.chats()[1]);
+            $.ajax({
+                url: '<?php echo Uri::create('register/invite.json'); ?>',
+                type: 'POST',
+                cache: false,
+                dataType : 'json',
+                data: formData,
+
+            }).done(function(data) {
+                alert("成功");
+                console.log("===========================================");
+                console.log(data);
+                // myViewModel.channels(data);
+
+            }).fail(function() {
+                alert("失敗");
+            });
+
+        };
 
     // submit comment section
     myViewModel.submitComment = function() {
@@ -183,6 +293,9 @@
 
             myViewModel.chats(data);
             myViewModel.chats(myViewModel.chats());
+            myViewModel.showCommentForm(false);
+            myViewModel.showEditForm(false);
+            myViewModel.showForm(true);
 
         }).fail(function() {
             alert("失敗");

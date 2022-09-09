@@ -8,6 +8,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-1.8.3.js" integrity="sha256-dW19+sSjW7V1Q/Z3KD1saC6NcE5TUIhLJzJbrdKzxKc=" crossorigin="anonymous"></script>
+    <?php echo \Security::js_fetch_token(); ?>
     <?php echo Asset::css('style.css'); ?>
 </head>
 <body>
@@ -25,46 +26,95 @@
         <h1>チャンネル一覧</h1>
 
         <div data-bind="foreach: channels" >
-            <a id="link" href="#" data-bind="click: moveToChannel, text: channelname, value: channelname"></a><br>
+            <a id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a><span data-bind="text: $parent.keyIcon($data)"></span>
+            <br>
         </div>
 
-        <!-- <a href="/message/index">message</a> -->
         <div>
-            <p>チャンネルを追加</p>
-            <form method="POST" action="/channel/register/<?php echo $loginUser ?>">
-                <input type="text" name='channel' placeholder="登録するチャンネル名を入力してください。"><br>
-                <input type="submit" value="送信">
-
+            <p data-bind="click: showAddChannelForm">チャンネルを追加</p>
+            <form method="POST" action="" name="channel" data-bind="visible: addChannelForm">
+                チャンネル名:<input type="text" id="addChannel" name='channel' placeholder="登録するチャンネル名を入力してください。">
+                チャンネルの公開範囲：<select name="number">
+                    <option value="1">public</option>
+                    <option value="2">private</option>
+                </select><br>
+                <button data-bind="click: addChannel">送信</button>
             </form>
         </div>
     </main>
 
     <script type="text/javascript">
-        let json = 
-        '<?php
-        $json=json_encode($data);
-        echo $json;
-        ?>';
-        console.log(json);
-        
-        let obj = JSON.parse(json);
-        console.log(obj);
 
-        function myViewModel() {
-            let self = this;
-            self.channels = ko.observableArray(obj);
+        let obj = 
+            <?php
+            $json=json_encode($data,JSON_PRETTY_PRINT);
+            echo $json;
+        ?>;
 
-            self.moveToChannel = function(channel) {
-                // console.log(channel['channelname']);
-                let link = document.getElementById('link');
-                let url = '<?php echo Uri::create('message/index/'); ?>'+channel['channelname'];
-                link.setAttribute('href', url);
-                // console.log(url);
-                window.location.href = url;
+        let myViewModel = {
+            channels: ko.observableArray(obj),
+            addChannelForm: ko.observable(false),
+            keyIcon: function(isOpen) {
+                let visible;
+                if( isOpen.open == "1" ) {
+                    visible = "🔒";
+                }else{
+                    visible = "";
+                };
+                return visible;
+            },
+        };
+
+        myViewModel.showAddChannelForm = function() {
+            myViewModel.addChannelForm(!myViewModel.addChannelForm());
+        };
+
+        myViewModel.moveToChannel = function(channel) {
+            let link = document.getElementById('link');
+            let url = '<?php echo Uri::create('message/index/'); ?>'+channel['channelname'];
+            link.setAttribute('href', url);
+            window.location.href = url;
+        };
+
+        myViewModel.addChannel = function() {
+
+            event.preventDefault();
+
+            let channel_visibility = document.channel.number;
+            let num = channel_visibility.selectedIndex;
+            let username = '<?php echo $loginUser; ?>';
+            let channelname = document.getElementById("addChannel").value;
+            console.log(num);
+            console.log(channelname);
+            let formData = {
+                'open': num,
+                'owner': username,
+                'channelname': channelname,
+                'cc_token': fuel_csrf_token()
             };
-            
+            console.log(formData);
+            // console.log(myViewModel.chats()[1]);
+            $.ajax({
+                url: '<?php echo Uri::create('register/register.json'); ?>',
+                type: 'POST',
+                cache: false,
+                dataType : 'json',
+                data: formData,
 
-        }
+            }).done(function(data) {
+                alert("成功");
+                console.log("===========================================");
+                console.log(data);
+                myViewModel.channels(data);
+
+            }).fail(function() {
+                alert("失敗");
+            });
+
+        };
+
+
+
 
         ko.applyBindings(myViewModel);
 
