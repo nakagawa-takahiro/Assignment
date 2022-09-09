@@ -31,6 +31,9 @@ class Controller_Channel extends Controller
         $data['user'] = Arr::get(Auth::get_user_id(),1);
         $data['loginUser'] = $loginUser;
         $data['channelkey'] = $channel_key;
+        $data['notification'] = DB::select()->from('comment')
+        ->where('mention_to', $loginUser)->and_where('read_check', '0')
+        ->execute()->as_array();
         // $data['loginUser'] = $loginUser;
 
 

@@ -30,6 +30,7 @@
             <br>
         </div>
 
+        <br>
         <div>
             <p data-bind="click: showAddChannelForm">チャンネルを追加</p>
             <form method="POST" action="" name="channel" data-bind="visible: addChannelForm">
@@ -41,6 +42,16 @@
                 <button data-bind="click: addChannel">送信</button>
             </form>
         </div>
+        <br>
+        <p>お知らせ一覧</p>
+        <div data-bind="foreach: notification">
+        <div style="border: solid black 1px">
+            FROM: <span data-bind="text: commented_by"></span><br>
+            <span data-bind="text: comment_content"></span><br>
+            <a href="" id="link2" data-bind="click: $parent.moveToChannelViaNotification">チャンネルへ移動</a>
+        </div>
+
+        </div>
     </main>
 
     <script type="text/javascript">
@@ -50,6 +61,13 @@
             $json=json_encode($data,JSON_PRETTY_PRINT);
             echo $json;
         ?>;
+
+        let notification = 
+            <?php
+            $json=json_encode($notification,JSON_PRETTY_PRINT);
+            echo $json;
+        ?>;
+        // console.log(notification);
 
         let myViewModel = {
             channels: ko.observableArray(obj),
@@ -72,6 +90,16 @@
         myViewModel.moveToChannel = function(channel) {
             let link = document.getElementById('link');
             let url = '<?php echo Uri::create('message/index/'); ?>'+channel['channelname'];
+            link.setAttribute('href', url);
+            window.location.href = url;
+        };
+
+        myViewModel.moveToChannelViaNotification = function(channel) {
+            // event.preventDefault();
+            // console.log(channel.channelname);
+            let link = document.getElementById('link2');
+            let id = channel.channelname;
+            let url = '<?php echo Uri::create('message/index/'); ?>'+channel.channelname;
             link.setAttribute('href', url);
             window.location.href = url;
         };

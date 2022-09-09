@@ -174,10 +174,14 @@ class Controller_Chat extends Controller_Rest
         endif;
 
         $chat_id = Input::post('chat_id');
+        $channelname = Input::post('channelname');
         $commented_by = Input::post('commented_by');
         $comment_content = Input::post('comment_content');
+        $mention_to = Input::post('mention_to');
         $insert = DB::insert('comment')->set([
             'chat_id' => $chat_id,
+            'channelname' => $channelname,
+            'mention_to' => $mention_to,
             'commented_by' => $commented_by,
             'comment_content' => $comment_content,
         ])->execute();

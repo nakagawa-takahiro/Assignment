@@ -69,7 +69,7 @@
             <summary data-bind="click: $parent.showComments" >スレッドを表示</summary>    
             <div data-bind="foreach: $parent.chats">
             <span data-bind="text: commented_by"></span><br>
-            <span data-bind="text: comment_content"></span><br><br>
+            <span style="color: blue" data-bind="text: $root.mention_to($data)"></span>    <span data-bind="text: comment_content"></span><br><br>
             </div>
             <a href="" data-bind="click: $parent.comment">コメントを追加する</a>
 
@@ -96,6 +96,7 @@
 
     <form action="" method="post" data-bind="visible: showCommentForm">
         <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
+        メンション:<select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'"></select><br>
         <textarea type="text" id="comment" placeholder="コメントを入力してください"></textarea>
         <button data-bind="click: submitComment">送信</button>
     </form>
@@ -197,7 +198,17 @@
         showEditForm: ko.observable(false),
         showCommentForm: ko.observable(false),
         showForm: ko.observable(true),
-        stateBookmark: ko.observable('+ブックマークに追加')
+        stateBookmark: ko.observable('+ブックマークに追加'),
+        mention_to: function(isOpen) {
+            // console.log(isOpen);
+                let mention;
+                if( isOpen.mention_to != "all" ) {
+                    mention = '@' + isOpen.mention_to;
+                }else{
+                    mention = "";
+                };
+                return mention;
+        },
     };
 
     myViewModel.showChannelSettings = function() {
@@ -267,12 +278,21 @@
     // submit comment section
     myViewModel.submitComment = function() {
         event.preventDefault();
-        // console.log(data);
-        // console.log(message_id);
+        let mention_to;
+        if(typeof myViewModel.selectedUser()=== "undefined"){
+            mention_to = "all";
+        }else{
+            mention_to = myViewModel.selectedUser();
+        };
+        console.log(mention_to);
+
         let username = '<?php echo $loginUser; ?>';
+        let channelname = '<?php echo $channelname; ?>';
         let content = document.getElementById("comment").value;
         let formData = {
             'chat_id': message_id,
+            'channelname': channelname,
+            'mention_to': mention_to,
             'commented_by': username,
             'comment_content': content,
             'cc_token': fuel_csrf_token()
