@@ -25,8 +25,10 @@
     <main style="padding: 1rem; margin-top: 2.5rem">
         <h1>チャンネル一覧</h1>
 
-        <div data-bind="foreach: channels" >
-            <a id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a><span data-bind="text: $parent.keyIcon($data)"></span>
+        <div data-bind="foreach: channels">
+            <a id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a>
+            <span data-bind="text: $parent.keyIcon($data)"></span>
+            <span data-bind="text: $parent.readOrNot($data)"></span>
             <br>
         </div>
 
@@ -52,15 +54,26 @@
         </div>
 
         </div>
+
+
     </main>
 
     <script type="text/javascript">
+
+        let test = 
+            <?php
+            $json=json_encode($test,JSON_PRETTY_PRINT);
+            echo $json;
+        ?>;
+        console.log(test);
 
         let obj = 
             <?php
             $json=json_encode($data,JSON_PRETTY_PRINT);
             echo $json;
         ?>;
+        console.log(obj);
+        
 
         let notification = 
             <?php
@@ -70,17 +83,27 @@
         // console.log(notification);
 
         let myViewModel = {
-            channels: ko.observableArray(obj),
+            channels: ko.observableArray(test),
             addChannelForm: ko.observable(false),
             keyIcon: function(isOpen) {
-                let visible;
+                let locked;
                 if( isOpen.open == "1" ) {
-                    visible = "🔒";
+                    locked = "🔒";
                 }else{
-                    visible = "";
+                    locked = "";
                 };
-                return visible;
+                return locked;
             },
+            readOrNot: function(value) {
+                // console.log(value);
+                let read;
+                if( value.read_id == "0" ) {
+                    read = "";
+                }else{
+                    read = '未読:' + value.read_id;
+                };
+                return read;
+            }
         };
 
         myViewModel.showAddChannelForm = function() {

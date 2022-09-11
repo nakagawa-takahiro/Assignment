@@ -12,7 +12,7 @@
     <?php echo Asset::css('style.css'); ?>
 </head>
 
-<body id='container'>
+<body id='container' onload="proc();">
 
 <header style="color: white; background-color: #222222; top: 0; height: 3rem; padding-left: 1rem">
     <h1><?php echo $channelname ?> <?php echo $loginUser ?></h1>
@@ -112,6 +112,30 @@
 </body>
 
 <script type="text/javascript">
+    function proc() {
+        let formData = {
+            'username': '<?php echo $loginUser ?>',
+            'channelname': '<?php echo $channelname ?>',
+            'read_id': '<?php echo $current_message ?>',
+            'cc_token': fuel_csrf_token()
+        };
+
+        $.ajax({
+            url: '<?php echo Uri::create('chat/read_message.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            console.log("===========================================");
+            console.log(data);
+
+        }).fail(function() {
+            alert("失敗");
+        });
+    };
+
     let channelData = 
         <?php
         $json=json_encode($channelData,JSON_PRETTY_PRINT);
@@ -430,10 +454,12 @@
         let username = '<?php echo $loginUser; ?>';
         let channelname = '<?php echo $channelname; ?>';
         let content = document.getElementById("content1").value;
+        let each_channel_id = '<?php echo $current_message ?>';
         let formData = {
             'username': username,
             'content': content,
             'channelname': channelname,
+            'each_channel_id': Number(each_channel_id) + 1,
             'cc_token': fuel_csrf_token()
         };
         console.log(formData);

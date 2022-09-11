@@ -20,8 +20,9 @@ class Controller_Chat extends Controller_Rest
         $username = Input::post('username');
         $message = Input::post('content');
         $channelname = Input::post('channelname');
+        $each_channel_id = Input::post('each_channel_id');
 
-        $data = Model_Message::insert_message($username, $message, $channelname);
+        $data = Model_Message::insert_message($username, $message, $channelname, $each_channel_id);
 
         return $this->response($data);
     }
@@ -236,6 +237,45 @@ class Controller_Chat extends Controller_Rest
         ])->execute();
 
         $data = DB::select()->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
+        
+        return $this->response($data);
+
+    }
+
+    public function post_read_message()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+
+        endif;
+
+        $username = Input::post('username');
+        $channelname = Input::post('channelname');
+        $read_id = Input::post('read_id');
+
+        $result = DB::select()->from('message_read_check')
+        ->where('username', $username)->and_where('channelname', $channelname)
+        ->execute()->as_array();
+
+        if($result){
+            DB::update('message_read_check')->value('read_id', $read_id)
+            ->where('username', $username)->and_where('channelname', $channelname)->execute();    
+        }else{
+
+        $insert = DB::insert('message_read_check')->set([
+            'username' => $username,
+            'channelname' => $channelname,
+            'read_id' => $read_id
+        ])->execute();
+        }
+        
+        $data = DB::select()->from('message_read_check')->execute()->as_array();
         
         return $this->response($data);
 

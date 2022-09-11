@@ -2,13 +2,17 @@
 
 class Model_Message extends \Model {
 
-    public static function insert_message($username, $message, $channelname)
+    public static function insert_message($username, $message, $channelname, $each_channel_id)
     {
         $insert = DB::insert('message')->set([
             'username' => $username,
             'content' => $message,
-            'channelname' => $channelname
+            'channelname' => $channelname,
+            'each_channel_id' => $each_channel_id
         ])->execute();
+
+        DB::update('message_read_check')->value('read_id', $each_channel_id)
+        ->where('username', $username)->and_where('channelname', $channelname)->execute();
 
         $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
         

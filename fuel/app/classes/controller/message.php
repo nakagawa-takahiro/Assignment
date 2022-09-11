@@ -7,6 +7,12 @@ class Controller_Message extends Controller
     {
 
 		$data['data'] = DB::select()->from('message')->where('channelname', $channelname)->and_where('deleted_at', '0')->execute()->as_array();
+		$current_message = DB::select('each_channel_id')->from('message')
+        ->order_by('each_channel_id', 'desc')
+        ->where('channelname', $channelname)->and_where('deleted_at', '0')
+        ->execute()->current();
+        $data['current_message'] = $current_message['each_channel_id'];
+        
         $data['user'] = Arr::get(Auth::get_user_id(),1);
         $data['loginUser'] = Auth::get_screen_name();
         $loginUser = Auth::get_screen_name();
