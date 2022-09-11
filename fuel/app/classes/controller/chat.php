@@ -122,38 +122,25 @@ class Controller_Chat extends Controller_Rest
 
         endif;
 
+        
+
         $message_id = Input::post('id');
         $username = Auth::get_screen_name();
-        $insert = DB::insert('bookmark')->set([
-            'username' => $username,
-            'message_id' => $message_id,
-        ])->execute();
-
-        $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
-        
-        return $this->response($data);
-
-    }
-    public function post_bookmark_recreate()
-    {
-        
-        // トークンチェック    
-        if (!\Security::check_token()) :
-            $res = array(
-            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
-        );
-
-        return $this->response($res);
-
-        endif;
-        $username = Auth::get_screen_name();
-
-        $bookmark_id = Input::post('id');
         $bookmark_state = Input::post('bookmark_state');
-        
-        DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('id', $bookmark_id)->execute();
 
-        $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
+        $result =  DB::select()->from('bookmark')->where('username', $username)->and_where('message_id', $message_id)->execute()->as_array();
+
+        if(!$result) {
+            $insert = DB::insert('bookmark')->set([
+                'username' => $username,
+                'message_id' => $message_id,
+            ])->execute();
+        }else{
+
+            DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('id', $bookmark_id)->execute();
+        }
+
+        $data = DB::select('message_id')->from('bookmark')->where('username', $username)->and_where('id', $insert[0])->execute()->as_array();
         
         return $this->response($data);
 
@@ -176,7 +163,7 @@ class Controller_Chat extends Controller_Rest
         $bookmark_id = Input::post('id');
         $bookmark_state = Input::post('bookmark_state');
         
-        DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('id', $bookmark_id)->execute();
+        DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('message_id', $bookmark_id)->execute();
 
         $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
         
@@ -274,7 +261,7 @@ class Controller_Chat extends Controller_Rest
             'read_id' => $read_id
         ])->execute();
         }
-        
+
         $data = DB::select()->from('message_read_check')->execute()->as_array();
         
         return $this->response($data);

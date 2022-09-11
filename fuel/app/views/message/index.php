@@ -66,8 +66,8 @@
             </div>
             <span>👍</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postGood, text: res_good, value: res_good"></a>
             <span>👎</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
-            <a href="#" data-bind="click: $parent.editChat" style="padding-left: 1rem">編集</a>
-            <a href="#" data-bind="click: $parent.deleteChat">削除</a>
+            <a href="#" data-bind="click: $parent.editChat, text: $root.btn_edit($data)" style="padding-left: 1rem">編集</a>
+            <a href="#" data-bind="click: $parent.deleteChat, text: $root.btn_delete($data)">削除</a>
             <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark($data)" style="padding-left: 15px"></a><br>
             <br>
             <details id="detail">
@@ -112,28 +112,31 @@
 </body>
 
 <script type="text/javascript">
+    
     function proc() {
-        let formData = {
-            'username': '<?php echo $loginUser ?>',
-            'channelname': '<?php echo $channelname ?>',
-            'read_id': '<?php echo $current_message ?>',
-            'cc_token': fuel_csrf_token()
+        if('<?php echo $current_message ?>' != "0"){
+            let formData = {
+                'username': '<?php echo $loginUser ?>',
+                'channelname': '<?php echo $channelname ?>',
+                'read_id': '<?php echo $current_message ?>',
+                'cc_token': fuel_csrf_token()
+            };
+
+            $.ajax({
+                url: '<?php echo Uri::create('chat/read_message.json'); ?>',
+                type: 'POST',
+                cache: false,
+                dataType : 'json',
+                data: formData,
+
+            }).done(function(data) {
+                console.log("===========================================");
+                console.log(data);
+
+            }).fail(function() {
+                alert("失敗");
+            });
         };
-
-        $.ajax({
-            url: '<?php echo Uri::create('chat/read_message.json'); ?>',
-            type: 'POST',
-            cache: false,
-            dataType : 'json',
-            data: formData,
-
-        }).done(function(data) {
-            console.log("===========================================");
-            console.log(data);
-
-        }).fail(function() {
-            alert("失敗");
-        });
     };
 
     let channelData = 
@@ -176,11 +179,10 @@
     
     let bookmarks = 
         <?php
-        $json=json_encode($bookmark,JSON_PRETTY_PRINT);
+        $json=json_encode($bookmarktext,JSON_PRETTY_PRINT);
         echo $json;
         ?>;
-        let bookmark_user = bookmarks.map(element => element.username);
-        let bookmark_id = bookmarks.map(element => element.message_id);
+
 
     let myViewModel = {
         stringValue: ko.observable(""),
@@ -236,7 +238,8 @@
         showCommentForm: ko.observable(false),
         showForm: ko.observable(true),
         stateBookmark: function(state) {
-            if(bookmark_user.includes(state.username) && bookmark_id.includes(state.id)) {
+            console.log(state);
+            if(bookmarks.indexOf(state.id) != -1) {
                 return "-ブックマークから削除";
             }else{
                 return "+ブックマークに追加";
@@ -252,6 +255,26 @@
                     mention = "";
                 };
                 return mention;
+        },
+
+        btn_edit: function(editdata) {
+                let text;
+                if( editdata.username == '<?php echo $loginUser; ?>' ) {
+                    text = '編集';
+                }else{
+                    text = "";
+                };
+                return text;
+        },
+
+        btn_delete: function(deletedata) {
+                let text;
+                if( deletedata.username == '<?php echo $loginUser; ?>' ) {
+                    text = '削除';
+                }else{
+                    text = "";
+                };
+                return text;
         },
     };
 
@@ -680,24 +703,25 @@
         event.preventDefault();
         let id;
         let url;
-        let bookmark = bookmarks.find(element => element.message_id == msg.id && element.username == msg.username);
+        let bookmark;
+        if(bookmarks.indexOf(msg.id) != -1){
+            bookmark = "delete";
+        }else{
+            bookmark = "add";
+        };
         let bookmark_state;
         let alertmsg;
         console.log(bookmark);
 
-        if(typeof bookmark == "undefined"){
+        if(bookmark == "add") {
             bookmark_state = "0";
             id = msg.id;
             url = '<?php echo Uri::create('chat/bookmark_create.json'); ?>';
             alertmsg = "ブックマークに登録しました。";
-        }else if(bookmark.deleted_at != "0") {
-            bookmark_state = "0";
-            id = bookmark.id;
-            url = '<?php echo Uri::create('chat/bookmark_recreate.json'); ?>';
-            alertmsg = "ブックマークに登録しました。";
+
         }else{
             bookmark_state = '<?php echo date('Y-m-d H:i:s') ?>';
-            id = bookmark.id;
+            id = msg.id;
             url = '<?php echo Uri::create('chat/bookmark_delete.json'); ?>';
             alertmsg = "ブックマークから削除しました。";
         }
@@ -722,8 +746,7 @@
             console.log("===========================================");
             console.log(data);
 
-            myViewModel.bookmarks(data);
-            myViewModel.bookmarks(myViewModel.bookmarks());
+            myViewModel.bookmarks.push(data['message_id']);
             alert(alertmsg);
 
         }).fail(function() {
@@ -739,6 +762,3 @@
 
 
 </html>
-
-
-
