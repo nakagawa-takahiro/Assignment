@@ -73,14 +73,16 @@
 - 8/23(火)から本格的に開発スタート
 - 9 月 20 までに完成させる
 
-### UI イメージ
+<!-- ### UI イメージ
 
 ![UIイメージ](./images/UI_image1.png)
-※メッセージについては最低限テキストの送信だけでも実装
+※メッセージについては最低限テキストの送信だけでも実装 -->
 
-### [チェックシートはこちら](/main/check_sheet.md)
+## <チェックシート>
 
-#### 構成
+### [チェックシート](/main/check_sheet.md)
+
+<!-- #### 構成
 
 - チャンネル一覧
 
@@ -98,12 +100,10 @@
 
 ### 補足
 
--
+- -->
 
 <br>
 
 ## <DB の設計>
-
-※詳細はこちら (今後追加：8/29)
 
 ### [データベース設計](https://docs.google.com/spreadsheets/d/1eardZKwNqOiGUFWTd6UJJSQfEZRKDcCcSSX4yI41e7E/edit?usp=sharing)

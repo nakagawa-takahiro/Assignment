@@ -1,6 +1,23 @@
+<style>
+details {
+  padding-left: 20px;
+
+}
+
+details > summary {
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+details[open] > summary {
+}
+
+</style>
+
 # 機能一覧
 
-## ログイン画面
+<details>
+<summary>ログイン画面</summary>
 
 <details>
 <summary>ログアウト</summary>
@@ -95,10 +112,12 @@ public function action_signup()
 ```
 
 </details>
+</details>
 
 <!-- ================================== -->
 
-## チャンネル一覧画面
+<details>
+<summary>チャンネル一覧画面</summary>
 
 <details>
 <summary>チャンネル一覧</summary>
@@ -483,9 +502,13 @@ public function action_index() {
 
 </details>
 
+</details>
+
 <!-- ================================== -->
 
-## ブックマーク画面
+<details>
+
+<summary>ブックマーク画面</summary>
 
 <details>
 
@@ -552,9 +575,13 @@ public function action_index()
 
 </details>
 
+</details>
+
 <!-- ================================== -->
 
-## プロフィール画面
+<details>
+
+<summary>プロフィール画面</summary>
 
 <details>
 
@@ -892,9 +919,13 @@ public function post_DM_create()
 
 </details>
 
+</details>
+
 <!-- ================================== -->
 
-## メッセージ画面
+<details>
+
+<summary>メッセージ画面</summary>
 
 <details>
 
@@ -1764,6 +1795,8 @@ setInterval(dataCheck, 1000);
 ```
 
 ```
+
+</details>
 
 </details>
 
