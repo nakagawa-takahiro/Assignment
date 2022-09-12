@@ -267,6 +267,17 @@ class Controller_Chat extends Controller_Rest
         return $this->response($data);
 
     }
+
+    public function post_check_data()
+    {
+
+        $channelname = Input::post('channelname');
+
+        $data = DB::select()->from('message')->where('channelname', $channelname)->execute()->as_array();
+        
+        return $this->response($data);
+
+    }
     
 }
 

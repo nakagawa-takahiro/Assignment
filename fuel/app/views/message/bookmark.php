@@ -24,7 +24,7 @@
     </header>
 
     <main style="padding: 1rem; margin-top: 2.5rem">
-    <div data-bind="foreach: message" >
+        <div data-bind="foreach: message" >
             <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
             <span data-bind="text: posted_at"></span><br>
             <div style="border: solid black 1px; padding: 1rem">

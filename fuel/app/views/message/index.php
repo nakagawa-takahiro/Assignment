@@ -140,6 +140,7 @@
         };
     };
 
+
     let channelData = 
         <?php
         $json=json_encode($channelData,JSON_PRETTY_PRINT);
@@ -184,6 +185,42 @@
         echo $json;
         ?>;
 
+    // 画面同期
+    let now_data = obj;
+
+    const dataCheck = function() {
+        let formData = {
+            'channelname': '<?php echo $channelname ?>',
+        };
+
+        $.ajax({
+            url: '<?php echo Uri::create('chat/check_data.json'); ?>',
+            type: 'POST',
+            cache: false,
+            dataType : 'json',
+            data: formData,
+
+        }).done(function(data) {
+            console.log("===========================================");
+            console.log(data);
+
+            if(JSON.stringify(data) === JSON.stringify(now_data)){
+                console.log(true);
+            }else{
+                console.log(false);
+                now_data = data;
+                myViewModel.message(now_data);
+                myViewModel.message(myViewModel.message());
+
+            };
+            
+
+        }).fail(function() {
+            alert("失敗");
+        });
+    }
+
+    // setInterval(dataCheck, 5000);
 
     let myViewModel = {
         stringValue: ko.observable(""),

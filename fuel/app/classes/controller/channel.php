@@ -5,6 +5,7 @@ class Controller_Channel extends Controller
     
     public function action_index()
     {
+        $data['id_info'] = Auth::get_user_id();
         $loginUser = Auth::get_screen_name();
         $channel_key = DB::select('channel_id')->from('channel_secret_key')->where('username', $loginUser)->execute()->as_array();
 
