@@ -26,9 +26,10 @@
         <h1>チャンネル一覧</h1>
 
         <div data-bind="foreach: channels">
-            <a id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a>
             <span data-bind="text: $parent.keyIcon($data)"></span>
-            <span data-bind="text: $parent.readOrNot($data)"></span>
+            <a id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a>
+            
+            <span data-bind="text: $parent.readOrNot($data)" style="color: red"></span>
             <br>
         </div>
 
@@ -67,14 +68,6 @@
         ?>;
         console.log(test);
 
-        let obj = 
-            <?php
-            $json=json_encode($data,JSON_PRETTY_PRINT);
-            echo $json;
-        ?>;
-        console.log(obj);
-        
-
         let notification = 
             <?php
             $json=json_encode($notification,JSON_PRETTY_PRINT);
@@ -87,10 +80,15 @@
             addChannelForm: ko.observable(false),
             keyIcon: function(isOpen) {
                 let locked;
-                if( isOpen.open == "1" ) {
+                if( isOpen.owner == "dm") {
+                    locked = "👥";
+                }else if( isOpen.open == "1" && isOpen.private == "1" ) {
+                    locked = "👤";
+                }
+                else if( isOpen.open == "1" ) {
                     locked = "🔒";
                 }else{
-                    locked = "";
+                    locked = "📖";
                 };
                 return locked;
             },
@@ -100,7 +98,7 @@
                 if( value.read_id == "0" ) {
                     read = "";
                 }else{
-                    read = '未読:' + value.read_id;
+                    read = '+' + value.read_id;
                 };
                 return read;
             }
@@ -157,6 +155,7 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                myViewModel.addChannelForm(!myViewModel.addChannelForm());
                 myViewModel.channels(data);
 
             }).fail(function() {

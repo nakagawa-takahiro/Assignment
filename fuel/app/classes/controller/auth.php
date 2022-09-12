@@ -18,6 +18,10 @@ class Controller_Auth extends Controller
                 'private' => 1
             ])->execute();
 
+            DB::insert('profile')->set([
+                'username' => "$username",
+            ])->execute();
+
             return View::forge('auth/index');
         }
         return View::forge('auth/index');

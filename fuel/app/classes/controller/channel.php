@@ -79,7 +79,7 @@ class Controller_Channel extends Controller
 
         $data['test'] = $test;
 
-        $data['data'] = array_merge($channel, $private);
+        // $data['data'] = array_merge($channel, $private);
 
         return View::forge('channel/channel', $data);
 

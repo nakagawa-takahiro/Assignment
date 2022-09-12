@@ -14,15 +14,15 @@ class Model_Message extends \Model {
         $result = DB::select()->from('message_read_check')->where('username', $username)->and_where('channelname', $channelname)->execute()->as_array();
         if($result){
             DB::update('message_read_check')->value('read_id', $each_channel_id)
-        ->where('username', $username)->and_where('channelname', $channelname)->execute();
+              ->where('username', $username)->and_where('channelname', $channelname)->execute();
         }else{
-            $insert = DB::insert('message_read_check')->set([
+            DB::insert('message_read_check')->set([
                 'username' => $username,
                 'channelname' => $channelname,
-                'each_channel_id' => $each_channel_id
+                'read_id' => $each_channel_id
             ])->execute();
         }
-        
+
         $data = DB::select()->from('message')->where('id', $insert[0])->execute()->current();
         
         return $data;

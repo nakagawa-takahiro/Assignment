@@ -21,6 +21,7 @@
         <a href="/bookmark/index">ブックマーク一覧</a>
         <a href="" data-bind="click: showChannelSettings, text: channelSettings, visible: channelSettingsVisibility()"></a>
         <a href="/auth/logout">ログアウト</a>
+        <a href="/profile/index/<?php echo $loginUser ?>">プロフィール</a>
 
     </nav>
 
@@ -59,7 +60,7 @@
 
     <div id="message" data-bind="foreach: message" style="margin: 3rem;">
         <div data-bind="visible: $parent.isVisible($data)" style="padding-top: 3rem; border-top: solid black 1px;">
-            <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
+            <span id="link" style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username, click: $parent.moveToProf"></span> 
             <span data-bind="text: posted_at"></span><br>
             <div style="border: solid black 1px; padding: 1rem">
                 <span style="white-space: pre-line;" data-bind="text: content, value: content"></span>
@@ -752,6 +753,14 @@
         }).fail(function() {
             alert("失敗");
         });
+    };
+
+    myViewModel.moveToProf = function(user) {
+        console.log(user);
+            let link = document.getElementById('link');
+            let url = '<?php echo Uri::create('profile/index/'); ?>'+user['username'];
+            link.setAttribute('href', url);
+            window.location.href = url;
     };
 
 
