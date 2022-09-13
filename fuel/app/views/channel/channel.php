@@ -61,12 +61,12 @@
 
     <script type="text/javascript">
 
-        let test = 
+        let data = 
             <?php
-            $json=json_encode($test,JSON_PRETTY_PRINT);
+            $json=json_encode($data,JSON_PRETTY_PRINT);
             echo $json;
         ?>;
-        console.log(test);
+        console.log(data);
 
         let notification = 
             <?php
@@ -76,7 +76,7 @@
         // console.log(notification);
 
         let myViewModel = {
-            channels: ko.observableArray(test),
+            channels: ko.observableArray(data),
             addChannelForm: ko.observable(false),
             keyIcon: function(isOpen) {
                 let locked;
@@ -95,10 +95,10 @@
             readOrNot: function(value) {
                 // console.log(value);
                 let read;
-                if( value.read_id == "0" ) {
+                if( value.unread_count == "0" ) {
                     read = "";
                 }else{
-                    read = '+' + value.read_id;
+                    read = '+' + value.unread_count;
                 };
                 return read;
             }
