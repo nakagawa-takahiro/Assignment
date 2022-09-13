@@ -68,13 +68,6 @@
         ?>;
         console.log(test);
 
-        let id_info = 
-            <?php
-            $json=json_encode($id_info,JSON_PRETTY_PRINT);
-            echo $json;
-        ?>;
-        console.log(id_info);
-
         let notification = 
             <?php
             $json=json_encode($notification,JSON_PRETTY_PRINT);

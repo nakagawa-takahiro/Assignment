@@ -3,7 +3,7 @@
 ## ログイン画面
 
 <details>
-<summary>ログアウト</summary>
+<summary>ログイン</summary>
 
 ## views/auth/index.php
 
@@ -1766,79 +1766,5 @@ setInterval(dataCheck, 1000);
 ```
 
 </details>
-
-<!-- ================================== -->
-
-<!-- <details>
-
-<summary></summary>
-
-##
-
-```
-
-```
-
-##
-
-```
-
-```
-
-##
-
-```
-
-```
-
-<details>
-
-<summary></summary>
-
-##
-
-```
-
-```
-
-##
-
-```
-
-```
-
-##
-
-```
-
-```
-
-</details>
-
-<details>
-
-<summary></summary>
-
-##
-
-```
-
-```
-
-##
-
-```
-
-```
-
-##
-
-```
-
-```
-
-</details>
-
-</details> -->
 
 <!-- ================================== -->

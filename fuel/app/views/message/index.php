@@ -15,7 +15,7 @@
 <body id='container' onload="proc();">
 
 <header style="color: white; background-color: #222222; top: 0; height: 3rem; padding-left: 1rem">
-    <h1><?php echo $channelname ?> <?php echo $loginUser ?></h1>
+    <h1>CHANNEL NAME: <?php echo $channelname ?> Signed in as <?php echo $loginUser ?></h1>
     <nav style="display: inline-block">
         <a href="/channel/index">チャンネル一覧</a>
         <a href="/bookmark/index">ブックマーク一覧</a>
@@ -461,7 +461,7 @@
 
     // show comments section
     myViewModel.showComments = function(details) {
-        // document.getElementById("detail").removeAttribute("open");
+        document.getElementById("detail").removeAttribute("open");
         // document.getElementById("detail").setAttribute("open", "false");
         let chats=[];
         myViewModel.chats(chats);

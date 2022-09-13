@@ -15,11 +15,15 @@ class Controller_Auth extends Controller
             
             DB::insert('channel')->set([
                 'channelname' => "$username",
+                'owner' => "$username",
+                'open' => 1,
                 'private' => 1
             ])->execute();
 
             DB::insert('profile')->set([
                 'username' => "$username",
+                'self_introduction' => "",
+                'url_link' => "",
             ])->execute();
 
             return View::forge('auth/index');
