@@ -363,7 +363,7 @@
             'cc_token': fuel_csrf_token()
         };
         $.ajax({
-            url: '<?php echo Uri::create('register/edit.json'); ?>',
+            url: '<?php echo Uri::create('register/edit_channelvisibility.json'); ?>',
             type: 'POST',
             cache: false,
             dataType : 'json',
@@ -461,7 +461,7 @@
 
     // show comments section
     myViewModel.showComments = function(details) {
-        document.getElementById("detail").removeAttribute("open");
+        // document.getElementById("detail").removeAttribute("open");
         // document.getElementById("detail").setAttribute("open", "false");
         let chats=[];
         myViewModel.chats(chats);

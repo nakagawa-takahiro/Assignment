@@ -30,20 +30,6 @@ class Controller_Message extends Controller
         
         $bookmarktext = [];
 
-        foreach ($messages as $message){
-            foreach ($bookmarks as $bookmark){
-                
-                if($message['id'] == $bookmark['message_id'] && $bookmark['deleted_at'] == "0"){
-                    $text = $message['id'];
-                    $bookmarktext[] = $text;
-                }
-            };
-           
-            $test[] = array_merge($message, );
-
-        };
-
-
         $data['bookmarktext'] = $bookmarktext;
         
         return View::forge('message/index', $data);

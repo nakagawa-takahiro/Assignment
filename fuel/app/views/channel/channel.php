@@ -9,9 +9,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-1.8.3.js" integrity="sha256-dW19+sSjW7V1Q/Z3KD1saC6NcE5TUIhLJzJbrdKzxKc=" crossorigin="anonymous"></script>
     <?php echo \Security::js_fetch_token(); ?>
+    <?php echo Asset::js('SplitView.js'); ?>
+    <?php echo Asset::css('splitview.css'); ?>
     <?php echo Asset::css('style.css'); ?>
 </head>
-<body>
+<body class="contents_box">
 
     <header style="color: white; background-color: #222222; top: 0; height: 3rem; padding-left: 1rem">
     <h1><?php echo "Signed in as $loginUser"; ?></h1>    
@@ -22,7 +24,9 @@
         </nav>
 
     </header>
-    <main style="padding: 1rem; margin-top: 2.5rem">
+    <main id="main" class="split-view horizontal" style="padding: 1rem; margin-top: 2.5rem">
+        
+    <div class="contents_box1">
         <h1>チャンネル一覧</h1>
 
         <div data-bind="foreach: channels">
@@ -33,7 +37,6 @@
             <br>
         </div>
 
-        <br>
         <div>
             <p data-bind="click: showAddChannelForm">チャンネルを追加</p>
             <form method="POST" action="" name="channel" data-bind="visible: addChannelForm">
@@ -45,19 +48,28 @@
                 <button data-bind="click: addChannel">送信</button>
             </form>
         </div>
-        <br>
-        <p>お知らせ一覧</p>
+    </div>
+    <div class="gutter"></div>
+    <div class="contents_box2">
+        <p class="split-view vertical">お知らせ一覧</p>
         <div data-bind="foreach: notification">
-        <div style="border: solid black 1px">
-            FROM: <span data-bind="text: commented_by"></span><br>
-            <span data-bind="text: comment_content"></span><br>
-            <a href="" id="link2" data-bind="click: $parent.moveToChannelViaNotification">チャンネルへ移動</a>
-        </div>
+            <div style="border: solid black 1px">
+                FROM: <span data-bind="text: commented_by"></span><br>
+                <span data-bind="text: comment_content"></span><br>
+                <a href="" id="link2" data-bind="click: $parent.moveToChannelViaNotification">チャンネルへ移動</a>
+            </div>
 
         </div>
+    </div>
+
 
 
     </main>
+
+    
+    <script>
+    SplitView.activate(document.getElementById("main"))
+    </script>
 
     <script type="text/javascript">
 

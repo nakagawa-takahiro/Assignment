@@ -122,25 +122,11 @@ class Controller_Chat extends Controller_Rest
 
         endif;
 
-        
-
         $message_id = Input::post('id');
         $username = Auth::get_screen_name();
         $bookmark_state = Input::post('bookmark_state');
 
-        $result =  DB::select()->from('bookmark')->where('username', $username)->and_where('message_id', $message_id)->execute()->as_array();
-
-        if(!$result) {
-            $insert = DB::insert('bookmark')->set([
-                'username' => $username,
-                'message_id' => $message_id,
-            ])->execute();
-        }else{
-
-            DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('id', $bookmark_id)->execute();
-        }
-
-        $data = DB::select('message_id')->from('bookmark')->where('username', $username)->and_where('id', $insert[0])->execute()->as_array();
+        $data = Model_Message::register_bookmark($message_id, $username, $bookmark_state);
         
         return $this->response($data);
 
@@ -162,11 +148,9 @@ class Controller_Chat extends Controller_Rest
 
         $bookmark_id = Input::post('id');
         $bookmark_state = Input::post('bookmark_state');
-        
-        DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('message_id', $bookmark_id)->execute();
+                
+        $data = Model_Message::delete_bookmark($username, $bookmark_id, $bookmark_state);
 
-        $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
-        
         return $this->response($data);
 
     }
@@ -185,13 +169,8 @@ class Controller_Chat extends Controller_Rest
         endif;
 
         $chat_id = Input::post('chat_id');
-        // $username = Auth::get_screen_name();
-        // $insert = DB::insert('bookmark')->set([
-        //     'username' => $username,
-        //     'message_id' => $message_id,
-        // ])->execute();
 
-        $data = DB::select()->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
+        $data = Model_Message::chat_comment($chat_id);
         
         return $this->response($data);
 
@@ -215,15 +194,8 @@ class Controller_Chat extends Controller_Rest
         $commented_by = Input::post('commented_by');
         $comment_content = Input::post('comment_content');
         $mention_to = Input::post('mention_to');
-        $insert = DB::insert('comment')->set([
-            'chat_id' => $chat_id,
-            'channelname' => $channelname,
-            'mention_to' => $mention_to,
-            'commented_by' => $commented_by,
-            'comment_content' => $comment_content,
-        ])->execute();
 
-        $data = DB::select()->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
+        $data = Model_Message::comment_post($chat_id, $channelname, $commented_by, $comment_content, $mention_to);
         
         return $this->response($data);
 
@@ -245,24 +217,8 @@ class Controller_Chat extends Controller_Rest
         $username = Input::post('username');
         $channelname = Input::post('channelname');
         $read_id = Input::post('read_id');
-
-        $result = DB::select()->from('message_read_check')
-        ->where('username', $username)->and_where('channelname', $channelname)
-        ->execute()->as_array();
-
-        if($result){
-            DB::update('message_read_check')->value('read_id', $read_id)
-            ->where('username', $username)->and_where('channelname', $channelname)->execute();    
-        }else{
-
-        $insert = DB::insert('message_read_check')->set([
-            'username' => $username,
-            'channelname' => $channelname,
-            'read_id' => $read_id
-        ])->execute();
-        }
-
-        $data = DB::select()->from('message_read_check')->execute()->as_array();
+        
+        $data = Model_Message::read_message($username, $channelname, $read_id);
         
         return $this->response($data);
 
