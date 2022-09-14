@@ -28,7 +28,21 @@ class Controller_Message extends Controller
         $bookmarks = DB::select()->from('bookmark')->where('username', $loginUser)->execute()->as_array();
         // $data['bookmark'] = DB::select()->from('bookmark')->where('deleted_at', '0')->and_where('username', $loginUser)->execute()->as_array();
         
-        $bookmarktext = [];
+        // $bookmarktext = [];
+
+        // foreach ($messages as $message){
+        //     foreach ($bookmarks as $bookmark){
+                
+        //         if($message['id'] == $bookmark['message_id'] && $bookmark['deleted_at'] == "0"){
+        //             $text = $message['id'];
+        //             $bookmarktext[] = $text;
+        //         }
+        //     };
+           
+        //     $test[] = array_merge($message, );
+
+        // };
+
 
         $data['bookmarktext'] = $bookmarktext;
         

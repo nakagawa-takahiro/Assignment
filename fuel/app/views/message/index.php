@@ -254,22 +254,6 @@
         users: ko.observableArray(users),
         bookmarks: ko.observableArray(bookmarks),
         selectedUser: ko.observable(),
-
-        // commentVisible: function(data1, data2) {
-        //     let filter;
-            
-        //     console.log(data1,data2);
-        //     console.log("========================================");
-            
-        //     if(data2.chat_id == data1.id){
-        //         filter = true;
-        //     }else{
-        //         filter = false;
-        //     };
-
-        //     return filter;
-
-        // },
         form1: ko.observable(""),
         form2: ko.observable(""),
         showEditForm: ko.observable(false),

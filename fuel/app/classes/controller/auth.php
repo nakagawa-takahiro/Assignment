@@ -49,10 +49,7 @@ class Controller_Auth extends Controller
 
             if (Auth::login($username, $password)) {
 
-                View::set_global('usr', $username);
-                // return View::forge('message/index');
                 Response::redirect('channel/index');
-                // return $view;
 
             } else {
                 echo "ログインに失敗しました";

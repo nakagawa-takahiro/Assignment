@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Channel extends Controller
+class Controller_Main extends Controller
 {
     
     public function action_index()
@@ -28,8 +28,10 @@ class Controller_Channel extends Controller
         };
 
         $data['bookdata'] = $bookmark;
+		$data['comment'] = DB::select()->from('comment')->where('deleted_at', '0')->execute()->as_array();
+        $data['users'] = DB::select('username')->from('users')->distinct()->execute()->as_array();
 
-        return View::forge('channel/channel', $data);
+        return View::forge('main', $data);
         
 
     }

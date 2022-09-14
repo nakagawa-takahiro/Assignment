@@ -39,18 +39,18 @@
 
 <script type="text/javascript">
 
-let obj = 
+    let obj = 
         <?php
         $json=json_encode($data,JSON_PRETTY_PRINT);
         echo $json;
         ?>;
         console.log(obj);
 
-    let myViewModel = {
+    let bookmarkViewModel = {
         message: ko.observableArray(obj)
     };
 
-    ko.applyBindings(myViewModel);
+    ko.applyBindings(bookmarkViewModel);
 
 </script>
 
