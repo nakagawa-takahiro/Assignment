@@ -13,50 +13,61 @@
     <?php echo Asset::css('splitview.css'); ?>
     <?php echo Asset::css('style.css'); ?>
 </head>
-<body class="contents_box">
 
-    <header style="color: white; background-color: #222222; top: 0; height: 3rem; padding-left: 1rem">
-    
-    <h1><?php echo "Signed in as $loginUser"; ?></h1>    
-    <nav style="display: inline-block">
-        <a href="/channel/index">チャンネル一覧</a>
-        <a href="" data-bind="click: showBookmark">ブックマーク一覧</a>
-        <a href="" data-bind="click: showChannelSettings, text: channelSettings, visible: channelSettingsVisibility()"></a>
-        <a href="/profile/index/<?php echo $loginUser ?>">プロフィール</a>
-        <a href="/auth/logout">ログアウト</a>
-    </nav>
+<body class="contents_box" id="container">
 
-    <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility" style="color: black">
-        チャンネル名を変更:
-        <input type="text" id="newChannelname" placeholder="新しいチャンネル名を入力してください">
-        <button data-bind="click: editChannelname">送信</button>
-    </form>
-    <form method="POST" action="" name="channelSettings" data-bind="visible: channelSettingsFormVisibility" style="color: black">
-        チャンネルの公開範囲:<select name="number">
-            <option value="1">public</option>
-            <option value="2">private</option>
-        </select>
-        <button data-bind="click: editChannel">完了</button>
-    </form>
-    <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility" style="color: black">
-    ユーザーを招待する:
-            <select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'">
-            </select>
-        <button data-bind="click: inviteUser">送信</button>
-    </form>
-
-    </header>
-    <main id="main" class="split-view horizontal" style="padding: 1rem; margin-top: 2.5rem">
+    <header style="top: 0">
+        <div id="header" >
+            <h1 class="imsg-head" style="color: white">内定者インターン 課題アプリ</h1>
+            <h1 class="imsg-head" style="color: white; margin-left: 1rem" data-bind="text: channelname"></h1>
+            <h1 class="imsg-head imsg-head-date" style="color: white"><?php echo "Signed in as $loginUser"; ?></h1>   
+        </div>
+         
+        <div id="navi">
+            <nav>
+                <a href="/channel/index">チャンネル一覧</a>
+                <a href="" data-bind="click: showBookmark">ブックマーク一覧</a>
+                <a href="" data-bind="click: showChannelSettings, text: channelSettings, visible: channelSettingsVisibility()"></a>
+                <a href="/profile/index/<?php echo $loginUser ?>">プロフィール</a>
+                <a href="/auth/logout">ログアウト</a>
+                <form class="imsg-head imsg-head-date">
+                    <span style="min-width: max-content;">フィルター🔍</span>
+                    <input style="min-width: -webkit-fill-available; margin-right: 5rem" type="text" data-bind='value: stringValue, valueUpdate: "afterkeydown"' placeholder="検索したい文字列を入力してください">
+                </form>
+            </nav>
+        </div>
         
-    <div class="split-view vertical contents_box1" style="position: fixed; bottom: 0; top: 3rem">
-        <div>
+
+        <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility" style="color: black">
+            チャンネル名を変更:
+            <input type="text" id="newChannelname" placeholder="新しいチャンネル名を入力してください">
+            <button data-bind="click: editChannelname">送信</button>
+        </form>
+        <form method="POST" action="" name="channelSettings" data-bind="visible: channelSettingsFormVisibility" style="color: black">
+            チャンネルの公開範囲:<select name="number">
+                <option value="1">public</option>
+                <option value="2">private</option>
+            </select>
+            <button data-bind="click: editChannel">完了</button>
+        </form>
+        <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility" style="color: black">
+        ユーザーを招待する:
+                <select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'">
+                </select>
+            <button data-bind="click: inviteUser">送信</button>
+        </form>
+    </header>
+    <main id="main" class="split-view horizontal" style="padding: 1rem; top: 0">
+        
+    <div class="contents_box1 split-view vertical" style="position: fixed; bottom: 0; top: 5rem; border-right: solid #eee 5px; padding: 1rem" >
+        <div class="contents_box">
             <h1>チャンネル一覧</h1>
 
             <div data-bind="foreach: channels">
                 <span data-bind="text: $parent.keyIcon($data)"></span>
-                <a id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a>
+                <a class="sidebar-accordion-body" id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a>
                 
-                <span data-bind="text: $parent.readOrNot($data)" style="color: red"></span>
+                <span data-bind="text: $parent.readOrNot($data)" style="color: white; background-color: #e11b74; border-radius: 10px;"></span>
                 <br>
             </div>
 
@@ -74,7 +85,7 @@
         </div>
         <div class="gutter"></div>
 
-        <div>
+        <div class="contents_box">
             <h1>お知らせ一覧</h1>
             <div data-bind="foreach: notification">
                 <div style="border: solid black 1px">
@@ -87,84 +98,112 @@
         </div>
 
     </div>
+    
 
-    <div style="margin-left: 21%; overflow-y: scroll; height: 100vh;">
-        <div style="position: fixed; top: 50px; color: black">
-            <h1>メッセージ <span data-bind="text: channelname"></span></h1>
-            <form>
-            フィルター🔍:<input type="text" data-bind='value: stringValue, valueUpdate: "afterkeydown"' placeholder="検索したい文字列を入力してください">
-            </form>
-        </div>
+    <div class="contents_box2" style="margin-left: 21%; overflow-y: scroll; height: 100vh;">
+        
 
         <div data-bind="visible: isVisible()" style="padding-top: 3rem">
-            <div id="message" data-bind="foreach: messages" style="margin: 3rem;">
+            <div style="position: fixed; top: 50px; color: black;">
+                <div style="margin-top: 2rem;">
+
+                </div>
+                
+            </div>
+            <div style="margin: 0rem 2rem 0rem 2rem;">
+            <h1 style="margin-top: 3rem; margin-bottom: 0rem">メッセージ</h1>
+            <h1 data-bind="text: message_intro_text"></h1>
+
+                <div id="message" data-bind="foreach: messages">
             
-                <div data-bind="visible: $parent.messageVisible($data)">
-                    <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
-                    <span data-bind="text: posted_at"></span><br>
-                    <div style="border: solid black 1px; padding: 1rem">
+                
+                <div class="intro-msg chat_mycompany" data-bind="visible: $parent.messageVisible($data)">
+                    <div class="imsg-head">
+                        <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
+                        <span class="imsg-head-date" data-bind="text: posted_at"></span><br>
+                    </div>    
+
+                    <div style="border: solid white 1px; padding: 1rem; background-color: white; color: black;">
                         <span style="white-space: pre-line;" data-bind="text: content, value: content"></span>
                     </div>
-                    <span>👍</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postGood, text: res_good, value: res_good"></a>
-                    <span>👎</span><a href="#" style="padding-left: 5px" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
-                    <a href="#" data-bind="click: $parent.editChat, text: $root.btn_edit($data)" style="padding-left: 1rem">編集</a>
-                    <a href="#" data-bind="click: $parent.deleteChat, text: $root.btn_delete($data)">削除</a>
-                    <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark($data)" style="padding-left: 15px"></a><br>
-                
+                    <div style="padding: 1rem; ">
+                        <span>👍</span><a href="#" style="text-decoration: none; " data-bind="click: $parent.postGood, text: res_good, value: res_good"></a>
+                        <span>👎</span><a href="#" style="padding-left: 5px; text-decoration: none;" data-bind="click: $parent.postBad, text: res_bad, value: res_bad"></a>
+                        <a href="#" data-bind="click: $parent.editChat, text: $root.btn_edit($data)" style="padding-left: 1rem">編集</a>
+                        <a href="#" data-bind="click: $parent.deleteChat, text: $root.btn_delete($data)">削除</a>
+                        <a href="#" data-bind="click: $parent.bookmark, text: $parent.stateBookmark($data)" style="padding-left: 15px; text-decoration: none; "></a>
+                    </div>
+                    
                     <div>
-                        <a href="" data-bind="click: $parent.showComments" >スレッドを表示</a>
+                        <a href="" data-bind="click: $parent.showComments" style="text-decoration: none;">スレッドを表示</a>
                         <!-- <a href="" data-bind="click: $parent.comment">コメントを追加する</a> -->
                     </div>
                 </div>
+                </div>
+                
                 
             </div>
         </div>
         
         <div style="position: fixed; bottom: 0px; width: 100%;">
-            <form action="" method="post" data-bind="visible: showForm"  >
-                <textarea type="text" id="content1" data-bind='value: form1, valueUpdate: "afterkeydown"' placeholder="ここにメッセージを入力してください"></textarea>
-                <button data-bind="click: submitMessage">送信</button>
-            </form>
+            <div style="background-color: white; padding: .5rem; border: solid black 1px">
+                <form action="" method="post" data-bind="visible: showForm"  >
+                    <textarea type="text" id="content1" data-bind='value: form1, valueUpdate: "afterkeydown"' placeholder="ここにメッセージを入力してください"></textarea>
+                    <button data-bind="click: submitMessage">送信</button>
+                </form>
 
-            <form action="" method="post" data-bind="visible: showEditForm">
-                <span>メッセージの編集中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
-                <textarea type="text" id="content2" data-bind='value: form2, valueUpdate: "afterkeydown"'></textarea>
-                <button data-bind="click: submitNewMessage" >送信</button>
-            </form>
+                <form action="" method="post" data-bind="visible: showEditForm">
+                    <span>メッセージの編集中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
+                    <textarea type="text" id="content2" data-bind='value: form2, valueUpdate: "afterkeydown"'></textarea>
+                    <button data-bind="click: submitNewMessage" >送信</button>
+                </form>
 
-            <form action="" method="post" data-bind="visible: showCommentForm">
-                <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
-                メンション:<select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'"></select><br>
-                <textarea type="text" id="comment" placeholder="コメントを入力してください"></textarea>
-                <button data-bind="click: submitComment">送信</button>
-            </form>
+                <form action="" method="post" data-bind="visible: showCommentForm">
+                    <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
+                    メンション:<select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'"></select><br>
+                    <textarea type="text" id="comment" placeholder="コメントを入力してください"></textarea>
+                    <button data-bind="click: submitComment">送信</button>
+                </form>
+            </div>
+            
 
         </div>
     </div>
 
+    <div class="gutter"></div>
 
-    <div data-bind="visible: bookmarkVisibility" style="overflow-y: scroll; height: 100vh;">
-        <h1>ブックマーク</h1>
-        <div data-bind="foreach: message" >
-            <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
-            <span data-bind="text: posted_at"></span><br>
-            <div style="border: solid black 1px; padding: 1rem">
-                <span data-bind="text: content, value: content"></span>
+
+    <div class="contents_box2" data-bind="visible: bookmarkVisibility" style="overflow-y: scroll; height: 100vh;">
+        <div style="margin: 3rem; margin-top: 6rem; margin-bottom: 6rem">
+            <h1>ブックマーク</h1>
+            <div data-bind="foreach: message">
+                <div class="intro-msg chat_mycompany">
+                    <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
+                    <span data-bind="text: posted_at"></span><br>
+                    <div style="padding: 1rem; background-color: white; color: black;">
+                        <span data-bind="text: content, value: content"></span>
+                    </div>
+                    <a href="">ブックマークから削除する</a>
+                </div>
             </div>
-            <a href="">ブックマークから削除する</a>
-            <br>
         </div>
+        
     </div>
 
-    <div data-bind="visible: commentsVisibility" style="overflow-y: scroll; height: 100vh;">
-        <h1>スレッド</h1>
-        <div data-bind="foreach: chats" >
-            <span style="padding: 1rem; font-size: 20px" data-bind="text: commented_by, value: commented_by"></span> 
-            <!-- <span data-bind="text: posted_at"></span><br> -->
-            <div style="border: solid black 1px; padding: 1rem">
-                <span data-bind="text: comment_content, value: comment_content"></span>
+    <div class="contents_box2" data-bind="visible: commentsVisibility" style="overflow-y: scroll; height: 100vh;">
+        <div style="margin: 3rem; margin-top: 6rem; margin-bottom: 6rem" >
+            <h1>スレッド</h1>
+            <div data-bind="foreach: chats" >
+                <div class="intro-msg chat_mycompany">
+                    <span style="padding: 1rem; font-size: 20px" data-bind="text: commented_by, value: commented_by"></span> 
+                    <!-- <span data-bind="text: posted_at"></span><br> -->
+                    <div style="padding: 1rem; background-color: white; color: black;">
+                        <span data-bind="text: comment_content, value: comment_content"></span>
+                    </div>
+                </div>
             </div>
-        </div>
+        </div>    
+
     </div>
     
     </main>
@@ -246,7 +285,7 @@
             selectedUser: ko.observable(),
             chats: ko.observableArray(comments),
             channelname: ko.observable(),
-
+            message_intro_text: ko.observable("チャンネルを選択して下さい"),
             channelSettings: ko.observable("チャンネル設定"),
             channelSettingsFormVisibility: ko.observable(false),
             channelSettingsVisibility: ko.observable(false),
@@ -271,7 +310,7 @@
                 if( value.unread_count == "0" ) {
                     read = "";
                 }else{
-                    read = '+' + value.unread_count;
+                    read = "+" + value.unread_count;
                 };
                 return read;
             },
@@ -471,6 +510,7 @@
                 channelData = data['channelData'];
                 myViewModel.messages(message_data);
                 myViewModel.channelname(channelname);
+                myViewModel.message_intro_text("");
                 if (channelData.owner == '<?php echo $loginUser; ?>'){
                     myViewModel.channelSettingsVisibility(true);
                 }else{

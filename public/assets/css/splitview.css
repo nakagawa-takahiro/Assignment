@@ -6,7 +6,15 @@
 
 .contents_box2 {
   overflow: scroll;
+}
+
+.contents_box {
+  overflow: scroll;
   width: 100%;
+}
+
+.contents_box::-webkit-scrollbar {
+  display: none;
 }
 
 .contents_box1::-webkit-scrollbar {
