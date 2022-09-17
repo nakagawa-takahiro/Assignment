@@ -151,7 +151,9 @@ class Model_Channel extends \Model {
 
     public static function edit_channelvisibility($open, $id){
         DB::update('channel')->value("open", $open)->where('id', $id)->execute();
-        $data = DB::select()->from('channel')->where('id', $id)->execute()->current();
+        $loginUser = Auth::get_screen_name();
+
+        $data = Model_Channel::get_channels($loginUser);
 
         return $data;
     }
@@ -173,7 +175,14 @@ class Model_Channel extends \Model {
             DB::update('comment')->value("channelname", $newchannelname)->where('id', 'in', $result3)->execute();
         }
 
-        return $newchannelname;
+        $loginUser = Auth::get_screen_name();
+
+        $newchanneldata = Model_Channel::get_channels($loginUser);
+
+        $data = ['newchannelname' => $newchannelname, 'newchanneldata' => $newchanneldata];
+
+
+        return $data;
     }
 
     public static function DM_create($channelname, $username1, $username2){

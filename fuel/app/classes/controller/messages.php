@@ -17,7 +17,7 @@ class Controller_Messages extends Controller_Rest
         return $this->response($res);
         endif;
 
-
+        $loginUser = Auth::get_screen_name();
         $channelname = Input::post('channelname');
 		$msgdata = DB::select()->from('message')->where('channelname', $channelname)->and_where('deleted_at', '0')->execute()->as_array();
 
@@ -33,7 +33,9 @@ class Controller_Messages extends Controller_Rest
 
 		$channelData = DB::select()->from('channel')->where('channelname', $channelname)->execute()->current();
 
-        $data = ['data' => $msgdata, 'current_message' => $current_message, 'channelData' => $channelData];
+        $newchanneldata = Model_Channel::get_channels($loginUser);
+
+        $data = ['data' => $msgdata, 'current_message' => $current_message, 'channelData' => $channelData, 'current_message' => $current_message, 'channeldata' => $newchanneldata];
 
         return $this->response($data);
     }

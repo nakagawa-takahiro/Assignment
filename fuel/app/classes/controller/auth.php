@@ -49,7 +49,7 @@ class Controller_Auth extends Controller
 
             if (Auth::login($username, $password)) {
 
-                Response::redirect('channel/index');
+                Response::redirect('main/index');
 
             } else {
                 echo "ログインに失敗しました";

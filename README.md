@@ -32,7 +32,7 @@
 - MAMP
 - PHP 8.0.1, 7.3
 - fuelphp 1.8
-- knockout.js 3.2.1
+- knockout.js 3.5.0
 - ajax 3.4.1
 
 <br>

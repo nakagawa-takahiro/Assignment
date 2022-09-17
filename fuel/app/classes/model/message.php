@@ -74,12 +74,12 @@ class Model_Message extends \Model {
                 'message_id' => $message_id,
             ])->execute();
             
-            $data = DB::select('message_id')->from('bookmark')->where('username', $username)->and_where('id', $insert[0])->execute()->as_array();
+            $data = DB::select()->from('message')->where('id', $message_id)->execute()->current();
 
         }else{
 
             DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('username', $username)->and_where('message_id', $message_id)->execute();
-            $data = DB::select('message_id')->from('bookmark')->where('username', $username)->and_where('message_id', $message_id)->execute()->as_array();
+            $data = DB::select()->from('message')->where('id', $message_id)->execute()->current();
         
         }
 
@@ -91,7 +91,23 @@ class Model_Message extends \Model {
     {
         DB::update('bookmark')->value("deleted_at", $bookmark_state)->where('username', $username)->and_where('message_id', $bookmark_id)->execute();
         
-        $data = DB::select()->from('bookmark')->where('username', $username)->and_where('deleted_at', "0")->execute()->as_array();
+        $id = DB::select('message_id')->from('bookmark')->where('username', $username)->and_where('deleted_at', '0')->execute()->as_array();
+        
+        // $d = DB::select('message_id')->from('bookmark')->where('message_id', $bookmark_id)->and_where('deleted_at', '0')->execute()->current();
+        // $data = DB::select()->from('message')->where('id', $d['message_id'])->execute()->current();
+
+        $array =[];
+        foreach($id as $i){
+            $aaa = $i['message_id'];
+            $array[] = $aaa;
+        }
+
+        $data = DB::select()
+        ->from('message')
+        ->where('id', 'in', $array)
+        ->and_where('deleted_at', '0')
+        ->execute()
+        ->as_array();
         
         return $data;
     }
@@ -99,7 +115,8 @@ class Model_Message extends \Model {
     public static function chat_comment($chat_id)
     {
 
-        $data = DB::select()->from('comment')->where('chat_id', $chat_id)->execute()->as_array();        
+        $data = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
+        ->from('comment')->where('chat_id', $chat_id)->execute()->as_array();        
         
         return $data;
     }
@@ -114,10 +131,28 @@ class Model_Message extends \Model {
             'comment_content' => $comment_content,
         ])->execute();
 
-        $data = DB::select()->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
+        $data = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
         
         return $data;
     }
+
+    public static function read_check($chat_id, $commented_by, $mention_to)
+    {
+        $date = date('Y-m-d H:i:s');
+        DB::update('comment')
+        ->value('read_check', $date)
+        ->where('id', $chat_id)->and_where('mention_to', $mention_to)->and_where('commented_by', $commented_by)
+        ->execute();
+
+        $mentions = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
+        ->from('comment')
+        ->where('mention_to', $mention_to)->and_where('read_check', '=', NULL)
+        ->execute()->as_array();
+
+        return $mentions;
+    }
+
+    
 
     public static function read_message($username, $channelname, $read_id)
     {

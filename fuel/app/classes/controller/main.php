@@ -9,12 +9,27 @@ class Controller_Main extends Controller
         
         $data['data'] = Model_Channel::get_channels($loginUser);
         $data['loginUser'] = $loginUser;
-        $data['notification'] = DB::select()->from('comment')
-        ->where('mention_to', $loginUser)->and_where('read_check', '0')
+
+        $mentions = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
+        ->from('comment')
+        ->where('mention_to', $loginUser)->and_where('read_check', '=', NULL)
+        ->execute()->as_array();
+        $invitations = DB::select('username_to', 'username_from', 'channelname')->from('invite')
+        ->where('username_to', $loginUser)->and_where('checked_at', '=', NULL)
         ->execute()->as_array();
 
+        // $notifications=[];
 
-        $bookmark_id = DB::select('message_id')->from('bookmark')->where('username', $loginUser)->execute()->as_array();
+        // foreach($mentions as $mention){
+        //     $newmentions[] = [
+
+        //     ]
+        // }
+
+        $data['notification'] = $invitations;
+        $data['mention'] = $mentions;
+
+        $bookmark_id = DB::select('message_id')->from('bookmark')->where('username', $loginUser)->and_where('deleted_at', '0')->execute()->as_array();
 		
         if(count($bookmark_id) != 0) {
             $bookmark = DB::select()
@@ -28,7 +43,7 @@ class Controller_Main extends Controller
         };
 
         $data['bookdata'] = $bookmark;
-		$data['comment'] = DB::select()->from('comment')->where('deleted_at', '0')->execute()->as_array();
+		$data['comment'] = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')->from('comment')->where('deleted_at', '0')->execute()->as_array();
         $data['users'] = DB::select('username')->from('users')->distinct()->execute()->as_array();
 
         return View::forge('main', $data);

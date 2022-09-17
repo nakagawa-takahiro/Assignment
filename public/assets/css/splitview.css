@@ -6,11 +6,14 @@
 
 .contents_box2 {
   overflow: scroll;
+  min-width: 40%;
+  /* max-width: 40%; */
 }
 
 .contents_box {
   overflow: scroll;
   width: 100%;
+  max-height: 60%;
 }
 
 .contents_box::-webkit-scrollbar {
@@ -65,4 +68,31 @@
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
   cursor: row-resize;
   height: 10px;
+}
+
+.content {
+  margin: 0 auto;
+  padding: 40px;
+}
+.modal {
+  display: none;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.modal__bg {
+  background: rgba(255, 255, 255, 0.8);
+  height: 100vh;
+  position: absolute;
+  width: 100%;
+}
+.modal__content {
+  background: rgba(255, 255, 255, 0.8);
+  left: 50%;
+  padding: 40px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
 }

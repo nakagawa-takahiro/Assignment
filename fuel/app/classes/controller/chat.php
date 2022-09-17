@@ -123,11 +123,15 @@ class Controller_Chat extends Controller_Rest
         endif;
 
         $message_id = Input::post('id');
+        $channelname = Input::post('channelname');
         $username = Auth::get_screen_name();
         $bookmark_state = Input::post('bookmark_state');
 
-        $data = Model_Message::register_bookmark($message_id, $username, $bookmark_state);
+        $bookmark = Model_Message::register_bookmark($message_id, $username, $bookmark_state);
+		$msgdata = DB::select()->from('message')->where('channelname', $channelname)->and_where('deleted_at', '0')->execute()->as_array();
         
+        $data = ['bookmark' => $bookmark, 'message_data' => $msgdata];
+
         return $this->response($data);
 
     }
@@ -145,11 +149,14 @@ class Controller_Chat extends Controller_Rest
 
         endif;
         $username = Auth::get_screen_name();
-
+        $channelname = Input::post('channelname');
         $bookmark_id = Input::post('id');
         $bookmark_state = Input::post('bookmark_state');
                 
-        $data = Model_Message::delete_bookmark($username, $bookmark_id, $bookmark_state);
+        $bookmark = Model_Message::delete_bookmark($username, $bookmark_id, $bookmark_state);
+		$msgdata = DB::select()->from('message')->where('channelname', $channelname)->and_where('deleted_at', '0')->execute()->as_array();
+
+        $data = ['bookmark' => $bookmark, 'message_data' => $msgdata];
 
         return $this->response($data);
 

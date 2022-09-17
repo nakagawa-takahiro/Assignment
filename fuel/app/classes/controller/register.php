@@ -82,11 +82,70 @@ class Controller_Register extends Controller_Rest
 
         $channel_id = Input::post('channel_id');
         $invited_user = Input::post('invited_user');
+
+        $username_from = Auth::get_screen_name();
+        $channelname = DB::select()->from('channel')
+        ->where('id', $channel_id)
+        ->execute()->current();
+        
+        Model_Invite::insert_invitation($channelname, $invited_user, $username_from);
         
         $insert = DB::insert('channel_secret_key')->set([
 			'channel_id' => "$channel_id",
 			'username' => $invited_user,
 		])->execute();
+
+    }
+
+    public function post_invite_checked()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+        endif;
+
+        $channelname = Input::post('channelname');
+        $username_to = Input::post('username_to');
+        $username_from = Input::post('username_from');
+        
+        $invite = Model_Invite::delete_invitation($channelname, $username_to, $username_from);
+        $msgdata = DB::select()->from('message')->where('channelname', $channelname)->and_where('deleted_at', '0')->execute()->as_array();
+
+        $data = ['message_data' => $msgdata, 'invite' => $invite];
+
+        return $this->response($data);
+
+    }
+
+    public function post_mention_checked()
+    {
+        
+        // トークンチェック    
+        if (!\Security::check_token()) :
+            $res = array(
+            'error' => 'セッションが切れている可能性があります。もう一度登録ボタンを押すか、ページを読み込み直してください。'
+        );
+
+        return $this->response($res);
+        endif;
+
+        $chat_id = Input::post('chat_id');
+        $message_id = Input::post('message_id');
+        $commented_by = Input::post('username');
+        $mention_to = Auth::get_screen_name();
+
+        $mention = Model_Message::read_check($chat_id, $commented_by, $mention_to);
+        $comment_data = Model_Message::chat_comment($message_id);
+        $msgdata = DB::select()->from('message')->where('id', $message_id)->and_where('deleted_at', '0')->execute()->current();
+
+        $data = ['comment_data' => $comment_data, 'mention' => $mention, 'message_data' => $msgdata];
+
+        return $this->response($data);
 
     }
 
