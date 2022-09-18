@@ -20,7 +20,7 @@
 
     <header style="top: 0">
         <div id="header" >
-            <h1 class="imsg-head" style="color: white">内定者インターン 課題アプリ</h1>
+            <h1 class="imsg-head" style="color: white">HRクラウド 内定者インターン 課題アプリ</h1>
             <h1 class="imsg-head" style="color: white; margin-left: 1rem" data-bind="text: channelname"></h1>
             <h1 class="imsg-head imsg-head-date" style="color: white"><?php echo "Signed in as $loginUser"; ?></h1>   
         </div>
@@ -29,8 +29,9 @@
             <nav>
                 <!-- <a href="/channel/index">チャンネル一覧</a> -->
                 <a href="" data-bind="click: showBookmark">ブックマーク一覧</a>
-                <a href="" data-bind="click: showChannelSettings, text: channelSettings, visible: channelSettingsVisibility()" class="js-modal-open" href="" data-target="modal01"></a>
-                <a href="/profile/index/<?php echo $loginUser ?>">プロフィール</a>
+                <a href="" data-bind="click: showChannelSettings, text: channelSettings, visible: channelSettingsVisibility()" class="js-modal-open" data-target="modal01"></a>
+                <a href="" data-bind="click: showProfile, text: profileText"></a>
+                <a class="js-modal-open" data-target="modal03">ユーザー一覧</a>
                 <a href="/auth/logout">ログアウト</a>
                 <form class="imsg-head imsg-head-date">
                     <span style="min-width: max-content;">フィルター🔍</span>
@@ -41,87 +42,137 @@
     </header>
 
 
-    <div id="modal01" class="modal js-modal">
-        <!-- <div class="modal__bg js-modal-close"></div> -->
-        <div class="modal__content">
+    <div id="modal01" class="modal js-modal form-block">
+        <div class="modal-header">
+            チャンネル設定
+        </div>
+        <div class="modal__content form-block-body">
             <div>
-                <!-- <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility"> -->
                 <form method="POST" action="" name="inviteUser">
-                    チャンネル名を変更:
+                    <span class="input-label">チャンネル名を変更</span>
                     <input type="text" id="newChannelname" placeholder="新しいチャンネル名を入力してください">
                     <button data-bind="click: editChannelname">送信</button>
                 </form>
-                <!-- <form method="POST" action="" name="channelSettings" data-bind="visible: channelSettingsFormVisibility"> -->
                 <form method="POST" action="" name="channelSettings">
-                    チャンネルの公開範囲:<select name="number">
+                    <span class="input-label" style="padding-top: 2rem">チャンネルの公開範囲</span>
+                    <select name="number">
                         <option value="1">public</option>
                         <option value="2">private</option>
                     </select>
                     <button data-bind="click: editChannel">完了</button>
                 </form>
-                <!-- <form method="POST" action="" name="inviteUser" data-bind="visible: channelSettingsFormVisibility"> -->
                 <form method="POST" action="" name="inviteUser">
-                ユーザーを招待する:
-                        <select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'">
-                        </select>
+                    <span class="input-label" style="padding-top: 2rem">ユーザーを招待する</span>
+                    <select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'"></select>
                     <button data-bind="click: inviteUser">送信</button>
                 </form>
             </div>
-            <a class="js-modal-close" href="">閉じる</a>
-        </div><!--modal__inner-->
-    </div><!--modal-->
-    <div id="modal02" class="modal js-modal">
-        <!-- <div class="modal__bg js-modal-close"></div> -->
-        <div class="modal__content">
-            <!-- <form method="POST" action="" name="channel" data-bind="visible: addChannelForm"> -->
+            <div class="close flex">
+                <a class="js-modal-close  btn close_info_modal" href="">閉じる</a>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal02" class="modal js-modal form-block">
+        <div class="form-block-header">
+            チャンネル作成
+        </div>
+        <div class="modal__content form-block-body">
             <form method="POST" action="" name="channel">
-                チャンネル名:<input type="text" id="addChannel" name='channel' placeholder="登録するチャンネル名を入力してください。">
-                チャンネルの公開範囲：<select name="number">
+            <span class="input-label">チャンネル名</span> 
+            <input type="text" id="addChannel" name='channel' placeholder="登録するチャンネル名を入力してください。">
+            <span class="input-label" style="padding-top: 2rem">チャンネルの公開範囲</span> 
+                <select name="number">
                     <option value="1">public</option>
                     <option value="2">private</option>
                 </select><br>
-                <button data-bind="click: addChannel">送信</button>
+                <div class="btn-container-btm btn-container-centered">
+                    <button class="btn btn-green btn-large btn_update_msetting" data-bind="click: addChannel">送信</button>
+                </div>
             </form>
-            <a class="js-modal-close" href="">閉じる</a>
-        </div><!--modal__inner-->
-    </div><!--modal-->
+            <div class="close flex">
+                <a class="js-modal-close btn close_info_modal" href="">閉じる</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal03" class="modal js-modal form-block">
+        <div class="form-block-header">
+            このチャンネルにいるユーザー
+        </div>
+        <div class="modal__content form-block-body">
+            <table class="table-plain table">
+                <thead>
+                    <tr><th>ユーザー名</th></tr>
+                </thead>
+                <tbody data-bind="foreach: userlist">
+                    <tr class="bold">
+                        <td data-bind="text: $parent.username_ownerchecked($data), click: $parent.moveToUserProfile" style="cursor: pointer;"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="close flex">
+                <a class="js-modal-close btn close_info_modal" href="">閉じる</a>
+            </div>
+        </div>
+    </div>
 
     <main id="main" class="split-view horizontal" style="padding: 1rem; top: 0; background-color: #fff">
         
     <div class="contents_box1 split-view vertical" style="position: fixed; bottom: 0; top: 5rem; border-right: solid #eee 5px; padding: 1rem; " >
         <div class="contents_box">
-            <h1>チャンネル一覧</h1>
+            <h1 class="form-block-header">チャンネル一覧</h1>
 
             <div data-bind="foreach: channels">
-                <span data-bind="text: $parent.keyIcon($data)"></span>
-                <a class="sidebar-accordion-body" id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname"></a>
+                <div data-bind="visible: $parent.channelVisible($data)">
+                    <span data-bind="text: $parent.keyIcon($data)"></span>
+                    <a class="sidebar-accordion-body" id="link" href="#" data-bind="click: $parent.moveToChannel, text: channelname, value: channelname, style: { backgroundColor: $parent.bgcolor($data), color: $parent.textcolor($data), fontSize: $parent.fontsize($data) }"></a>
+                    <span data-bind="text: $parent.readOrNot($data)" style="color: white; background-color: #e11b74; border-radius: 10px;"></span>
+                </div>
                 
-                <span data-bind="text: $parent.readOrNot($data)" style="color: white; background-color: #e11b74; border-radius: 10px;"></span>
-                <br>
             </div>
 
             <div class="js-modal-open" href="" data-target="modal02">
-                <p data-bind="click: showAddChannelForm">チャンネルを追加</p>
-                
+                <p data-bind="click: showAddChannelForm" style="cursor: pointer;">チャンネルを追加</p>
             </div>
+            <form class="imsg-head imsg-head-date">
+                <input style="min-width: -webkit-fill-available;" type="text" data-bind='value: channelStringValue, valueUpdate: "afterkeydown"' placeholder="チャンネルを検索できます。">
+            </form>
         </div>
         <div class="gutter"></div>
 
         <div class="contents_box">
-            <h1>お知らせ一覧</h1>
-            
-            <div data-bind="foreach: notification">
-                <div data-bind="click: $parent.removeNotification" style="border: solid black 1px; padding: 1rem; margin: 1rem">    
-                    <span data-bind="text: username_from" style="color: red"></span> invited you to 
-                    <span data-bind="text: channelname" style="color: blue"></span>
-                </div>
-            </div>
-            <div data-bind="foreach: mention">
-                <div data-bind="click: $parent.removeMention" style="border: solid black 1px; padding: 1rem; margin: 1rem">
-                    <span data-bind="text: channelname" style="color: blue"></span><br>
-                    <span data-bind="text: commented_by" style="color: red"></span> mentioned you
-                </div>
-            </div>
+            <h1 class="form-block-header">通知一覧</h1>
+
+            <table class="table-plain table">
+                <thead>
+                    <tr><th>内容</th></tr>
+                </thead>
+                <tbody data-bind="foreach: notification">
+                    <tr class="bold" data-bind="click: $parent.removeNotification" style="cursor: pointer;">
+                        <td>
+                            <span data-bind="text: username_from" style="color: navy"></span>
+                            <span> invited you to </span>
+                            <span data-bind="text: channelname" style="color: crimson"></span>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody data-bind="foreach: mention">
+                    <tr class="bold" data-bind="click: $parent.removeMention" style="cursor: pointer;">
+                        <td>
+                            <span>Mentioned by </span>
+                            <span data-bind="text: commented_by" style="color: navy"></span>
+                            <span> in </span>
+                            <span data-bind="text: channelname" style="color: crimson"></span>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
         </div>
 
     </div>
@@ -139,15 +190,14 @@
             </div>
             <div style="margin: 0rem 2rem 0rem 2rem;">
             
-            <h1 style="margin-top: 3rem; margin-bottom: 0rem">メッセージ <span data-bind="text: message_intro_text"></span></h1>
-            
+            <h1 class="form-block-header" style="margin-top: 3rem; ">メッセージ <span data-bind="text: message_intro_text"></span></h1>
 
                 <div id="message" data-bind="foreach: messages">
             
                 
                 <div class="intro-msg chat_mycompany" data-bind="visible: $parent.messageVisible($data), style: { backgroundColor: $parent.color($data) }">
                     <div class="imsg-head">
-                        <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
+                        <span style="padding: 1rem; cursor: pointer; font-size: 20px" data-bind="text: username, value: username, click: $parent.moveToUserProfile"></span> 
                         <span class="imsg-head-date" data-bind="text: posted_at"></span><br>
                     </div>    
 
@@ -170,45 +220,49 @@
                 
                 
             </div>
-        </div>
+            <div style="position: fixed; bottom: 0px; width: -webkit-fill-available;">
+                <div style="background-color: white; padding: .5rem;">
+                    <form action="" method="post" data-bind="visible: showForm"  >
+                        <textarea type="text" id="content1" data-bind='value: form1, valueUpdate: "afterkeydown"' placeholder="ここにメッセージを入力してください"></textarea>
+                        <button data-bind="click: submitMessage">送信</button>
+                    </form>
 
-        <div style="position: fixed; bottom: 0px; width: -webkit-fill-available;">
-            <div style="background-color: white; padding: .5rem;">
-                <form action="" method="post" data-bind="visible: showForm"  >
-                    <textarea type="text" id="content1" data-bind='value: form1, valueUpdate: "afterkeydown"' placeholder="ここにメッセージを入力してください"></textarea>
-                    <button data-bind="click: submitMessage">送信</button>
-                </form>
+                    <form action="" method="post" data-bind="visible: showEditForm">
+                        <span>メッセージの編集中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
+                        <textarea type="text" id="content2" data-bind='value: form2, valueUpdate: "afterkeydown"'></textarea>
+                        <button data-bind="click: submitNewMessage" >送信</button>
+                    </form>
 
-                <form action="" method="post" data-bind="visible: showEditForm">
-                    <span>メッセージの編集中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
-                    <textarea type="text" id="content2" data-bind='value: form2, valueUpdate: "afterkeydown"'></textarea>
-                    <button data-bind="click: submitNewMessage" >送信</button>
-                </form>
-
-                <form action="" method="post" data-bind="visible: showCommentForm">
-                    <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
-                    メンション:<select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'"></select><br>
-                    <textarea type="text" id="comment" placeholder="コメントを入力してください"></textarea>
-                    <button data-bind="click: submitComment">送信</button>
-                </form>
+                    <form action="" method="post" data-bind="visible: showCommentForm">
+                        <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
+                        メンション:<select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'"></select><br>
+                        <textarea type="text" id="comment" placeholder="コメントを入力してください"></textarea>
+                        <button data-bind="click: submitComment">送信</button>
+                    </form>
+                </div>
             </div>
-            
 
         </div>
-        
-        
+
     </div>
+
+    
 
     <div class="gutter"></div>
 
 
     <div class="contents_box2" data-bind="visible: bookmarkVisibility" style="overflow-y: scroll; height: 100vh;">
         <div style="margin: 3rem; margin-top: 5rem; margin-bottom: 6rem">
-            <h1>ブックマーク</h1>
+            
+            <div class="form-block-header imsg-head">
+                <h1 class="imsg-head">ブックマーク</h1>
+                <span class="imsg-head-date" data-bind="click: closeBookmark" style="font-size: 1.5rem; cursor: pointer;">×</span>
+            </div>
+
             <div data-bind="foreach: bookmarks">
                 <div class="intro-msg chat_mycompany">
                     <div style="border-bottom: solid white 1px">
-                        In <span data-bind="text: channelname, value: channelname"></span>
+                        <span data-bind="text: channelname, value: channelname"></span>
                     </div>
                     <div class="imsg-head">
                         <span style="padding: 1rem; font-size: 20px" data-bind="text: username, value: username"></span> 
@@ -234,7 +288,12 @@
 
     <div class="contents_box2" data-bind="visible: commentsVisibility" style="overflow-y: scroll; height: 100vh;">
         <div style="margin: 3rem; margin-top: 5rem; margin-bottom: 6rem" >
-            <h1>スレッド</h1>
+            
+            <div class="form-block-header imsg-head">
+                <h1 class="imsg-head">スレッド</h1>
+                <span class="imsg-head-date" data-bind="click: closeComments" style="font-size: 1.5rem; cursor: pointer;">×</span>
+            </div>
+
             <div data-bind="foreach: messageforcomment">
                 <div class="intro-msg chat_mycompany" data-bind="style: { backgroundColor: $parent.color($data) }">
                     <div class="imsg-head" >
@@ -274,6 +333,38 @@
         </div>    
 
     </div>
+
+    <div class="contents_box2 list-item-body" data-bind="visible: profileVisibility" style="overflow-y: scroll; height: 100vh;">
+        <div class="list-item-body-left" style="margin: 3rem; margin-top: 5rem; margin-bottom: 6rem">
+        
+            <div class="form-block-header imsg-head">
+                <h1 class="imsg-head">プロフィール</h1>
+                <span class="imsg-head-date" data-bind="click: closeProfile" style="font-size: 1.5rem; cursor: pointer;">×</span>
+            </div>
+            
+            <p class="student-name" data-bind="text: username"></p>
+            <p class="introduction-student-area" data-bind="text: self_introduction"></p>
+            <p data-bind="text: url"></p>
+            <div>
+                <a href="" data-bind="click: moveToDM, visible: dmVisible">DMはこちらのリンクから</a>
+                <a href="" data-bind="click: editProf, visible: profVisible">プロフィールを編集する</a>
+            
+                <form action="" method="post" data-bind="visible: showProfForm"  >
+                    <div class="input-label" style="padding-top: 1rem">
+                        自己紹介文
+                    </div>
+                    <textarea type="text" id="content" placeholder="ここに文章を入力してください" data-bind="text: editContent"></textarea>
+                    <div class="input-label" style="padding-top: 2rem">
+                        URL
+                    </div>
+                    <input type="text" id="url_link" placeholder="URL" data-bind="text: editUrl">
+                    <div class="btn-container-btm btn-container-centered">
+                        <button class="btn btn-green btn-large btn_update_msetting" data-bind="click: submitNewProf">完了</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     
     </main>
 
@@ -300,16 +391,25 @@
         });
 
         let channelname;
+        let userlist = [];
         let current_message = "0";
         let message_id;
         let channelData = {id: "0", owner: "null"};
+
+        let obj = 
+            <?php
+            $json=json_encode($profdata,JSON_PRETTY_PRINT);
+            echo $json;
+        ?>;
+        // console.log(obj);
+
 
         let data = 
             <?php
             $json=json_encode($data,JSON_PRETTY_PRINT);
             echo $json;
         ?>;
-        // console.log(data);
+        console.log(data);
 
         let notification = 
             <?php
@@ -348,9 +448,7 @@
             $json=json_encode($comment,JSON_PRETTY_PRINT);
             echo $json;
         ?>;
-        console.log(comments);
-
-        
+        // console.log(comments);
 
         function getIndex(value, arr, prop) {
             for(let i = 0; i < arr.length; i++) {
@@ -365,7 +463,9 @@
 
         let myViewModel = {
             stringValue: ko.observable(""),
+            channelStringValue: ko.observable(""),
             channels: ko.observableArray(data),
+            userlist: ko.observableArray(userlist),
             notification: ko.observableArray(notification),
             mention: ko.observableArray(mention),
             messages: ko.observableArray(message_data),
@@ -387,10 +487,21 @@
             channelSettings: ko.observable("チャンネル設定"),
             channelSettingsFormVisibility: ko.observable(false),
             channelSettingsVisibility: ko.observable(false),
+            username: ko.observable(obj.username),
+            self_introduction: ko.observable(obj.self_introduction),
+            url: ko.observable(obj.url_link),
+            showProfForm: ko.observable(false),
+            editContent: ko.observable(obj.self_introduction),
+            editUrl: ko.observable(obj.url_link),
+            profileText: ko.observable("プロフィール"),
+            profileVisibility: ko.observable(false),
+            profileData: ko.observable(obj),
+            profVisible: ko.observable(false),
+            dmVisible: ko.observable(false),
+            
 
             color: function(message) {
-                console.log(message);
-                if(message.username == "nakagawa"){
+                if(message.username == '<?php echo $loginUser; ?>'){
                     return "#3f4e66";
                 }else{
                     return "#6f89b4";
@@ -398,7 +509,29 @@
 
             },
 
+            bgcolor: function(channel) {
+                if(channel.channelname == channelname){
+                    return "#6f89b4";
+                }else{
+                    return "transparent";
+                }
+
+            },
+
+            textcolor: function(channel) {
+                if(channel.channelname == channelname){
+                    return "#fff";
+                }
+            },
+
+            fontsize: function(channel) {
+                if(channel.channelname == channelname){
+                    return "1.1rem";
+                }
+            },
+
             keyIcon: function(isOpen) {
+                console.log(isOpen);
                 let locked;
                 if( isOpen.owner == "dm") {
                     locked = "👥";
@@ -412,6 +545,19 @@
                 };
                 return locked;
             },
+
+            username_ownerchecked: function(owner) {
+                let username;
+                console.log(owner);
+                // console.log(channelData);
+                if( owner.username == channelData.owner) {
+                    username = owner.username + "👑";
+                }else{
+                    username = owner.username;
+                };
+                return username;
+            },
+
             readOrNot: function(value) {
                 // console.log(value);
                 let read;
@@ -440,6 +586,20 @@
                 if(myViewModel.stringValue() == ""){
                     filter = true;
                 }else if(data.content.includes(myViewModel.stringValue()) && myViewModel.stringValue() != ""){
+                    filter = true;
+                }else{
+                    filter = false;
+                };
+
+                return filter;
+            },
+
+            channelVisible: function(data) {
+
+                let filter;
+                if(myViewModel.channelStringValue() == ""){
+                    filter = true;
+                }else if(data.channelname.includes(myViewModel.channelStringValue()) && myViewModel.channelStringValue() != ""){
                     filter = true;
                 }else{
                     filter = false;
@@ -492,6 +652,198 @@
             },
             
         };
+
+        myViewModel.showProfile = function() {
+
+            event.preventDefault();
+            let profile_user = '<?php echo $loginUser ?>';
+
+            let formData = {
+                'profile_user': profile_user,
+                'cc_token': fuel_csrf_token()
+            };
+
+            console.log(formData);
+
+            $.ajax({
+                url: '<?php echo Uri::create('messages/get_profile.json'); ?>',
+                type: 'POST',
+                cache: false,
+                dataType : 'json',
+                data: formData,
+
+            }).done(function(data) {
+                console.log("===========================================");
+                console.log(data);
+                // myViewModel.profileData(myViewModel.profileData(data));
+                myViewModel.profVisible(true);
+                myViewModel.dmVisible(false);
+                myViewModel.username(data.username);
+                myViewModel.self_introduction(data.self_introduction);
+                myViewModel.url(data.url);
+                if(myViewModel.profileVisibility()==false){
+                    myViewModel.profileVisibility(!myViewModel.profileVisibility());
+                    myViewModel.bookmarkVisibility(false);
+                    myViewModel.commentsVisibility(false);
+                }
+
+            }).fail(function() {
+                alert("失敗");
+            });            
+            
+        };
+
+        myViewModel.closeBookmark = function() {
+            myViewModel.bookmarkVisibility(false);
+        };
+
+        myViewModel.closeProfile = function() {
+            myViewModel.profileVisibility(false);
+        };
+
+        myViewModel.closeComments = function() {
+            myViewModel.commentsVisibility(false);
+        };
+
+        myViewModel.moveToUserProfile = function(user) {
+
+            event.preventDefault();
+            myViewModel.profileVisibility(false);
+
+            let profile_user = user.username;
+
+            let formData = {
+                'profile_user': profile_user,
+                'cc_token': fuel_csrf_token()
+            };
+
+            console.log(formData);
+
+            $.ajax({
+                url: '<?php echo Uri::create('messages/get_profile.json'); ?>',
+                type: 'POST',
+                cache: false,
+                dataType : 'json',
+                data: formData,
+
+            }).done(function(data) {
+                console.log("===========================================");
+                console.log(data);
+                // myViewModel.profileData(myViewModel.profileData(data));
+
+                if(data.username == '<?php echo $loginUser ?>'){
+                    myViewModel.dmVisible(false);
+                    myViewModel.profVisible(true);
+                }else{
+                    myViewModel.dmVisible(true);
+                    myViewModel.profVisible(false);                    
+                }
+
+                myViewModel.username(data.username);
+                myViewModel.self_introduction(data.self_introduction);
+                myViewModel.url(data.url);
+                if(myViewModel.profileVisibility()==false){
+                    myViewModel.profileVisibility(!myViewModel.profileVisibility());
+                    myViewModel.bookmarkVisibility(false);
+                    myViewModel.commentsVisibility(false);
+                }
+
+
+            }).fail(function() {
+                alert("失敗");
+            });
+
+        };
+
+        myViewModel.moveToDM = function() {
+            event.preventDefault();
+            let channelname = obj.username + '-' + '<?php echo $loginUser ?>';
+            let profile_user = obj.username;
+            let login_user = '<?php echo $loginUser ?>';
+
+            let formData = {
+                'channelname': channelname,
+                'profile_user': profile_user,
+                'login_user': login_user,
+                'cc_token': fuel_csrf_token()
+            };
+
+            console.log(formData);
+
+            $.ajax({
+                url: '<?php echo Uri::create('register/DM_create.json'); ?>',
+                type: 'POST',
+                cache: false,
+                dataType : 'json',
+                data: formData,
+
+            }).done(function(data) {
+                alert("DMに移動します。");
+                console.log("===========================================");
+                console.log(data);
+                myViewModel.messages(data.message_data);
+                myViewModel.message_intro_text("In " + data.channelname);
+                myViewModel.channelname(data.channelname);
+
+            }).fail(function() {
+                alert("失敗");
+            });
+        };
+
+        myViewModel.editProf = function() {
+
+            event.preventDefault();
+            myViewModel.showProfForm(!myViewModel.showProfForm());
+
+        };
+
+        myViewModel.submitNewProf = function() {
+            event.preventDefault();
+            let content = document.getElementById("content").value;
+            if(content == ""){
+                content = obj.self_introduction;
+            }
+            let url_link = document.getElementById("url_link").value;
+            if(url_link == ""){
+                url_link = obj.url_link;
+            }
+            
+            let formData = {
+                'username': '<?php echo $loginUser ?>',
+                'content': content,
+                'url_link': url_link,
+                'cc_token': fuel_csrf_token()
+            };
+            console.log(formData);
+
+            $.ajax({
+                url: '<?php echo Uri::create('edit/edit.json'); ?>',
+                type: 'POST',
+                cache: false,
+                dataType : 'json',
+                data: formData,
+
+            }).done(function(data) {
+                // alert("成功");
+                console.log("===========================================");
+                console.log(data);
+
+                alert("編集が完了しました。")
+
+                myViewModel.self_introduction(data.self_introduction);
+                myViewModel.url(data.url_link);
+                myViewModel.self_introduction(myViewModel.self_introduction());
+                myViewModel.url(myViewModel.url());
+
+                myViewModel.showProfForm(!myViewModel.showProfForm());
+
+
+            }).fail(function() {
+                alert("失敗");
+            });
+
+
+        }
 
 
         myViewModel.showChannelSettings = function() {
@@ -565,7 +917,14 @@
             event.preventDefault();
 
             let invite_user = myViewModel.selectedUser();
+            let username = '<?php echo $loginUser; ?>';
+            let content = username + 'が' + invite_user + 'を招待しました。';
+            let each_channel_id = current_message;
+
             let formData = {
+                'username': username,
+                'each_channel_id': Number(each_channel_id) + 1,
+                'content': content,
                 'invited_user': invite_user,
                 'channel_id': channelData.id,
                 'cc_token': fuel_csrf_token()
@@ -583,6 +942,8 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                myViewModel.messages.push(data);
+                myViewModel.messages(myViewModel.messages());
                 // myViewModel.channels(data);
 
             }).fail(function() {
@@ -650,15 +1011,20 @@
                 console.log("===========================================");
                 console.log(data);
                 message_data = data['data'];
+                userlist = data['users'];
                 channelname = channel['channelname'];
                 current_message = data['current_message'];
                 channelData = data['channelData'];
-                current_message = data['current_message']
-                newchanneldata = data['channeldata']
+                current_message = data['current_message'];
+                newchanneldata = data['channeldata'];
+                console.log(userlist);
+
                 myViewModel.messages(message_data);
+                myViewModel.userlist(userlist);
                 myViewModel.channelname(channelname);
                 myViewModel.channels(newchanneldata);
                 myViewModel.message_intro_text("In " + channelname);
+
                 if (channelData.owner == '<?php echo $loginUser; ?>'){
                     myViewModel.channelSettingsVisibility(true);
                 }else{
@@ -671,6 +1037,7 @@
 
                 var obj = document.getElementById('message');
                 obj.scrollIntoView(false);
+
 
             }).fail(function() {
                 alert("失敗");
@@ -701,8 +1068,13 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                channelname = data['channelname'];
+                myViewModel.channels(channelname);
+                myViewModel.channelname(channelname);
+
                 myViewModel.notification(data['invite']);
                 myViewModel.messages(data['message_data']);
+                myViewModel.message_intro_text("In " + channelname);
 
             }).fail(function() {
                 alert("失敗");

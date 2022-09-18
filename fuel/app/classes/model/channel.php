@@ -217,9 +217,16 @@ class Model_Channel extends \Model {
     
             ])->execute();
     
-            $data = DB::select('channelname')->from('channel')
+            $channel = DB::select('channelname')->from('channel')
               ->where('id', $insert[0])
               ->execute()->current();
+
+            $msg = DB::select()->from('message')
+            ->where('channelname', $channel)
+            ->and_where('deleted_at', '0')
+            ->execute()->as_array();
+
+            $data = ['message_data' => $msg, 'channelname' => $channel];
     
         }
         return $data;

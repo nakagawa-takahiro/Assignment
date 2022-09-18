@@ -82,6 +82,9 @@ class Controller_Register extends Controller_Rest
 
         $channel_id = Input::post('channel_id');
         $invited_user = Input::post('invited_user');
+        $username = Input::post('username');
+        $message = Input::post('content');
+        $each_channel_id = Input::post('each_channel_id');
 
         $username_from = Auth::get_screen_name();
         $channelname = DB::select()->from('channel')
@@ -94,6 +97,12 @@ class Controller_Register extends Controller_Rest
 			'channel_id' => "$channel_id",
 			'username' => $invited_user,
 		])->execute();
+
+        $channelname = $channelname['channelname'];
+        
+        $data = Model_Message::insert_message($username, $message, $channelname, $each_channel_id);
+        
+        return $this->response($data);
 
     }
 
@@ -116,7 +125,7 @@ class Controller_Register extends Controller_Rest
         $invite = Model_Invite::delete_invitation($channelname, $username_to, $username_from);
         $msgdata = DB::select()->from('message')->where('channelname', $channelname)->and_where('deleted_at', '0')->execute()->as_array();
 
-        $data = ['message_data' => $msgdata, 'invite' => $invite];
+        $data = ['message_data' => $msgdata, 'invite' => $invite, 'channelname' => $channelname];
 
         return $this->response($data);
 

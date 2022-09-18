@@ -32,11 +32,31 @@ class Controller_Messages extends Controller_Rest
         }
 
 		$channelData = DB::select()->from('channel')->where('channelname', $channelname)->execute()->current();
+		
+        $users = DB::select('username')->from('message')
+        // ->order_by('id', 'desc')
+        ->distinct(true)
+        ->where('channelname', $channelname)
+        ->execute()->as_array();
 
         $newchanneldata = Model_Channel::get_channels($loginUser);
 
-        $data = ['data' => $msgdata, 'current_message' => $current_message, 'channelData' => $channelData, 'current_message' => $current_message, 'channeldata' => $newchanneldata];
+        $data = [
+            'data' => $msgdata,
+            'users' => $users,
+            'current_message' => $current_message, 
+            'channelData' => $channelData, 
+            'current_message' => $current_message, 
+            'channeldata' => $newchanneldata
+        ];
 
         return $this->response($data);
+    }
+
+    public function post_get_profile()
+    {
+        $profileUser = Input::post('profile_user');
+		$data = DB::select()->from('profile')->where('username', $profileUser)->and_where('deleted_at', '0')->execute()->current();
+        return $data;
     }
 }

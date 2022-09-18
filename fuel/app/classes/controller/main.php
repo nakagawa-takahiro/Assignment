@@ -8,6 +8,8 @@ class Controller_Main extends Controller
         $loginUser = Auth::get_screen_name();
         
         $data['data'] = Model_Channel::get_channels($loginUser);
+		$data['profdata'] = DB::select()->from('profile')->where('username', $loginUser)->and_where('deleted_at', '0')->execute()->current();
+
         $data['loginUser'] = $loginUser;
 
         $mentions = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
