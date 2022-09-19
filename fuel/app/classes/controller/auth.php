@@ -22,7 +22,7 @@ class Controller_Auth extends Controller
 
             DB::insert('profile')->set([
                 'username' => "$username",
-                'self_introduction' => "",
+                'self_introduction' => "よろしくお願いします。",
                 'url_link' => "",
             ])->execute();
 

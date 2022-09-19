@@ -1,27 +1,11 @@
 # HR クラウド 内定者インターン課題
 
-### 9/18 の成果
+### 9/19 の成果
 
-- ユーザー招待とメンションの通知機能
-- views修正
-- 今いるチャンネルをハイライト
-- 自分のメッセージをハイライト
-- 招待時にメッセージを残す
-- チャンネルにいるユーザー一覧を表示(オーナーを明示)
-- モーダルまわり
-- チャンネルのフィルター
+- エラー対処
+- チェックシート作成
+- DB設計書更新
 
-### よく使うファイルのリンク
-
-[チャット画面(views/message/index.php)](/fuel/app/views/message/index.php)
-
-[チャット保存(controller/chat.php)](/fuel/app/classes/controller/chat.php)
-
-[チャンネル一覧画面(views/channel/channel.php)](/fuel/app/views/channel/channel.php)
-
-[チャンネル追加(controller/channel.php)](fuel/app/classes/controller/channel.php)
-
-<br>
 
 ## <課題　開発編要件>
 
@@ -84,7 +68,7 @@
 
 ## <チェックシート>
 
-### [チェックシート](/main/check_sheet.md)
+### [チェックシート](https://docs.google.com/spreadsheets/d/1ZPREYfqALgx4OfUK6cZYECYJOt7X6JLOH_rc3lZnw50/edit?usp=sharing)
 
 <!-- #### 構成
 

@@ -20,7 +20,7 @@
 
     <header style="top: 0">
         <div id="header" >
-            <h1 class="imsg-head" style="color: white">HRクラウド 内定者インターン 課題アプリ</h1>
+            <h1 class="imsg-head" style="color: white">課題アプリ</h1>
             <h1 class="imsg-head" style="color: white; margin-left: 1rem" data-bind="text: channelname"></h1>
             <h1 class="imsg-head imsg-head-date" style="color: white"><?php echo "Signed in as $loginUser"; ?></h1>   
         </div>
@@ -391,6 +391,7 @@
         });
 
         let channelname;
+        let user_selected;
         let userlist = [];
         let current_message = "0";
         let message_id;
@@ -480,7 +481,6 @@
             showCommentForm: ko.observable(false),
             selectedUser: ko.observable(),
             bookmarks: ko.observableArray(bookmarks),
-            selectedUser: ko.observable(),
             chats: ko.observableArray(comments),
             channelname: ko.observable(),
             message_intro_text: ko.observable("※チャンネルを選択して下さい"),
@@ -510,7 +510,7 @@
             },
 
             bgcolor: function(channel) {
-                if(channel.channelname == channelname){
+                if(channel.channelname == myViewModel.channelname()){
                     return "#6f89b4";
                 }else{
                     return "transparent";
@@ -519,13 +519,13 @@
             },
 
             textcolor: function(channel) {
-                if(channel.channelname == channelname){
+                if(channel.channelname == myViewModel.channelname()){
                     return "#fff";
                 }
             },
 
             fontsize: function(channel) {
-                if(channel.channelname == channelname){
+                if(channel.channelname == myViewModel.channelname()){
                     return "1.1rem";
                 }
             },
@@ -559,7 +559,7 @@
             },
 
             readOrNot: function(value) {
-                // console.log(value);
+                console.log(value);
                 let read;
                 if( value.unread_count == "0" ) {
                     read = "";
@@ -574,7 +574,7 @@
                 if(bookmarks.find(e => e.id === state.id)) {
                     return "-ブックマークから削除";
                 }
-                if(bookmarks.find(e => e.id !== state.id)){
+                else{
                     return "+ブックマークに追加";
                 }
             },
@@ -746,7 +746,8 @@
                     myViewModel.profileVisibility(!myViewModel.profileVisibility());
                     myViewModel.bookmarkVisibility(false);
                     myViewModel.commentsVisibility(false);
-                }
+                };
+                user_selected = profile_user;
 
 
             }).fail(function() {
@@ -757,8 +758,9 @@
 
         myViewModel.moveToDM = function() {
             event.preventDefault();
-            let channelname = obj.username + '-' + '<?php echo $loginUser ?>';
-            let profile_user = obj.username;
+            // console.log(user_selected);
+            let channelname = user_selected + '-' + '<?php echo $loginUser ?>';
+            let profile_user = user_selected;
             let login_user = '<?php echo $loginUser ?>';
 
             let formData = {
@@ -781,7 +783,7 @@
                 alert("DMに移動します。");
                 console.log("===========================================");
                 console.log(data);
-                myViewModel.messages(data.message_data);
+                myViewModel.messages(data['message_data']);
                 myViewModel.message_intro_text("In " + data.channelname);
                 myViewModel.channelname(data.channelname);
 
@@ -1068,13 +1070,13 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
-                channelname = data['channelname'];
-                myViewModel.channels(channelname);
+                // channelname = data['channelname'];
+                myViewModel.message_intro_text("In " + channelname);
                 myViewModel.channelname(channelname);
+                // myViewModel.bgcolor();
 
                 myViewModel.notification(data['invite']);
                 myViewModel.messages(data['message_data']);
-                myViewModel.message_intro_text("In " + channelname);
 
             }).fail(function() {
                 alert("失敗");
@@ -1548,6 +1550,10 @@
 
                 if(myViewModel.commentsVisibility() == false){
                     myViewModel.commentsVisibility(!myViewModel.commentsVisibility());
+                };
+
+                if(myViewModel.bookmarkVisibility() == true){
+                    myViewModel.bookmarkVisibility(!myViewModel.bookmarkVisibility());
                 };
 
                 myViewModel.chats(data);
