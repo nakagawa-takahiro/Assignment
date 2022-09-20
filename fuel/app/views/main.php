@@ -17,6 +17,8 @@
 </head>
 
 <body class="contents_box" id="container">
+<div id="loader" class="show" data-bind="visible: showLoad"></div>
+<div class="overlay show" data-bind="visible: showLoad"></div>
 
     <header style="top: 0">
         <div id="header" >
@@ -236,7 +238,7 @@
                     <form action="" method="post" data-bind="visible: showCommentForm">
                         <span>コメントを入力中です</span> <a href="#" data-bind="click: editStop">取消</a><br>
                         メンション:<select data-bind="options: users, value: selectedUser, optionsCaption: '-選択してください-'"></select><br>
-                        <textarea type="text" id="comment" placeholder="コメントを入力してください"></textarea>
+                        <textarea type="text" id="comment" data-bind='value: form3' placeholder="コメントを入力してください"></textarea>
                         <button data-bind="click: submitComment">送信</button>
                     </form>
                 </div>
@@ -260,7 +262,7 @@
             </div>
 
             <div data-bind="foreach: bookmarks">
-                <div class="intro-msg chat_mycompany">
+                <div class="intro-msg chat_mycompany" data-bind="style: { backgroundColor: $parent.color($data) }">
                     <div style="border-bottom: solid white 1px">
                         <span data-bind="text: channelname, value: channelname"></span>
                     </div>
@@ -476,6 +478,7 @@
             commentsVisibility: ko.observable(false),
             form1: ko.observable(""),
             form2: ko.observable(""),
+            form3: ko.observable(""),
             showForm: ko.observable(false),
             showEditForm: ko.observable(false),
             showCommentForm: ko.observable(false),
@@ -483,6 +486,7 @@
             bookmarks: ko.observableArray(bookmarks),
             chats: ko.observableArray(comments),
             channelname: ko.observable(),
+            message_id: ko.observable(),
             message_intro_text: ko.observable("※チャンネルを選択して下さい"),
             channelSettings: ko.observable("チャンネル設定"),
             channelSettingsFormVisibility: ko.observable(false),
@@ -498,6 +502,7 @@
             profileData: ko.observable(obj),
             profVisible: ko.observable(false),
             dmVisible: ko.observable(false),
+            showLoad: ko.observable(false),
             
 
             color: function(message) {
@@ -784,8 +789,8 @@
                 console.log("===========================================");
                 console.log(data);
                 myViewModel.messages(data['message_data']);
-                myViewModel.message_intro_text("In " + data.channelname);
-                myViewModel.channelname(data.channelname);
+                myViewModel.message_intro_text("In " + data['channelname'].channelname);
+                myViewModel.channelname(data['channelname'].channelname);
 
             }).fail(function() {
                 alert("失敗");
@@ -995,6 +1000,8 @@
         myViewModel.moveToChannel = function(channel) {
             
             event.preventDefault();
+            myViewModel.showLoad(true);
+
 
             let formData = {
                 'channelname': channel['channelname'],
@@ -1043,6 +1050,9 @@
 
             }).fail(function() {
                 alert("失敗");
+            }).always(function() {
+                myViewModel.showLoad(false);
+
             });
         };
 
@@ -1121,10 +1131,16 @@
 
                 myViewModel.chats(data['comment_data']);
                 myViewModel.chats(myViewModel.chats());
+                channelname = data['message_data'].channelname;
+                message_id = data['message_data'].id;
                 myViewModel.messageforcomment(data['message_data']);
+                
                 myViewModel.messageforcomment(myViewModel.messageforcomment());
 
                 myViewModel.mention(data['mention']);
+
+                console.log(message_id);
+                console.log(channelname);
 
             }).fail(function() {
                 alert("失敗");
@@ -1352,7 +1368,6 @@
                     myViewModel.bookmarks(data['bookmark']);
 
                 }
-                myViewModel.bookmarks(myViewModel.bookmarks());
                 myViewModel.messages(data['message_data']);
                 myViewModel.messages(myViewModel.messages());
 
@@ -1485,6 +1500,7 @@
 
             let username = '<?php echo $loginUser; ?>';
             let content = document.getElementById("comment").value;
+
             let formData = {
                 'chat_id': message_id,
                 'channelname': channelname,
@@ -1506,8 +1522,11 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                // console.log(myViewModel.chats());
 
                 myViewModel.chats(data);
+                myViewModel.form3("");
+                
                 myViewModel.chats(myViewModel.chats());
                 myViewModel.showCommentForm(false);
                 myViewModel.showEditForm(false);
@@ -1524,8 +1543,7 @@
         // show comments section
         myViewModel.showComments = function(details) {
             event.preventDefault();
-            // document.getElementById("detail").removeAttribute("open");
-            // document.getElementById("detail").setAttribute("open", "false");
+            myViewModel.showLoad(true);
             let chats=[];
             myViewModel.chats(chats);
             myViewModel.chats(myViewModel.chats());
@@ -1560,11 +1578,14 @@
                 myViewModel.chats(myViewModel.chats());
                 myViewModel.messageforcomment(details);
                 myViewModel.messageforcomment(myViewModel.messageforcomment());
+                
                 message_id = details.id;
                 console.log(message_id);
 
             }).fail(function() {
                 alert("失敗");
+            }).always(function() {
+                myViewModel.showLoad(false);
             });
             return true;
             

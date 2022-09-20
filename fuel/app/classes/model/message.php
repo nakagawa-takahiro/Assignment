@@ -97,17 +97,22 @@ class Model_Message extends \Model {
         // $data = DB::select()->from('message')->where('id', $d['message_id'])->execute()->current();
 
         $array =[];
-        foreach($id as $i){
-            $aaa = $i['message_id'];
-            $array[] = $aaa;
-        }
 
-        $data = DB::select()
-        ->from('message')
-        ->where('id', 'in', $array)
-        ->and_where('deleted_at', '0')
-        ->execute()
-        ->as_array();
+        if($id){
+            foreach($id as $i){
+                $aaa = $i['message_id'];
+                $array[] = $aaa;
+            }
+
+            $data = DB::select()
+            ->from('message')
+            ->where('id', 'in', $array)
+            ->and_where('deleted_at', '0')
+            ->execute()
+            ->as_array();
+        }else{
+            $data = [];
+        }
         
         return $data;
     }
@@ -116,7 +121,9 @@ class Model_Message extends \Model {
     {
 
         $data = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
-        ->from('comment')->where('chat_id', $chat_id)->execute()->as_array();        
+        ->from('comment')
+        ->where('chat_id', $chat_id)
+        ->execute()->as_array();        
         
         return $data;
     }
@@ -131,7 +138,10 @@ class Model_Message extends \Model {
             'comment_content' => $comment_content,
         ])->execute();
 
-        $data = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')->from('comment')->where('chat_id', $chat_id)->execute()->as_array();
+        $data = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
+        ->from('comment')
+        ->where('chat_id', $chat_id)
+        ->execute()->as_array();
         
         return $data;
     }

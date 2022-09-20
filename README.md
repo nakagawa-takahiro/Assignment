@@ -1,10 +1,8 @@
 # HR クラウド 内定者インターン課題
 
-### 9/19 の成果
+### 9/20 の成果
 
-- エラー対処
-- チェックシート作成
-- DB設計書更新
+- ローディング
 
 
 ## <課題　開発編要件>
@@ -70,3 +68,5 @@
 ## <DB の設計>
 
 ### [データベース設計](https://docs.google.com/spreadsheets/d/1eardZKwNqOiGUFWTd6UJJSQfEZRKDcCcSSX4yI41e7E/edit?usp=sharing)
+
+### [SQLファイル](./main/kmchat.sql)

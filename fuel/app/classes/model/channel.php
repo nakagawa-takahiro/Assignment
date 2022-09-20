@@ -194,9 +194,12 @@ class Model_Channel extends \Model {
         
         
         if($result){
-            $data = DB::select('channelname')->from('channel')
+            $channel = DB::select('channelname')->from('channel')
               ->where('id', $result['id'])
               ->execute()->current();
+
+            $data = ['message_data' => [], 'channelname' => $channel];
+            
 
         }else{
             $insert = DB::insert('channel')->set([

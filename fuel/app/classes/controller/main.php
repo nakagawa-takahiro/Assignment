@@ -8,7 +8,7 @@ class Controller_Main extends Controller
         $loginUser = Auth::get_screen_name();
         
         $data['data'] = Model_Channel::get_channels($loginUser);
-		$data['profdata'] = DB::select()->from('profile')->where('username', $loginUser)->and_where('deleted_at', '0')->execute()->current();
+		$data['profdata'] = DB::select()->from('profile')->where('username', $loginUser)->execute()->current();
 
         $data['loginUser'] = $loginUser;
 
@@ -34,7 +34,7 @@ class Controller_Main extends Controller
         $bookmark_id = DB::select('message_id')->from('bookmark')->where('username', $loginUser)->and_where('deleted_at', '0')->execute()->as_array();
 		
         if(count($bookmark_id) != 0) {
-            $bookmark = DB::select()
+            $bookmark = DB::select('id', 'username', 'content', 'posted_at', 'channelname', 'res_good', 'res_bad')
             ->from('message')
             ->where('id', 'in', $bookmark_id)
             ->and_where('deleted_at', '0')

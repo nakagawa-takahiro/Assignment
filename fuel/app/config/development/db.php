@@ -6,7 +6,7 @@
 return array(
 	'default' => array(
 		'connection'  => array(
-			'dsn'        => 'mysql:host=localhost;dbname=kmchat',
+			'dsn'        => 'mysql:host=localhost;dbname=chatapp',
 			'username'   => 'root',
 			'password'   => 'root',
 		),
