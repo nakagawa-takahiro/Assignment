@@ -87,16 +87,20 @@ class Controller_Register extends Controller_Rest
         $each_channel_id = Input::post('each_channel_id');
 
         $username_from = Auth::get_screen_name();
-        $channelname = DB::select()->from('channel')
-        ->where('id', $channel_id)
-        ->execute()->current();
+        $channelname = DB::select()
+          ->from('channel')
+          ->where('id', $channel_id)
+          ->execute()
+          ->current();
         
         Model_Invite::insert_invitation($channelname, $invited_user, $username_from);
         
-        $insert = DB::insert('channel_secret_key')->set([
+        $insert = DB::insert('channel_secret_key')
+          ->set([
 			'channel_id' => "$channel_id",
 			'username' => $invited_user,
-		])->execute();
+		  ])
+          ->execute();
 
         $channelname = $channelname['channelname'];
         
@@ -123,7 +127,12 @@ class Controller_Register extends Controller_Rest
         $username_from = Input::post('username_from');
         
         $invite = Model_Invite::delete_invitation($channelname, $username_to, $username_from);
-        $msgdata = DB::select()->from('message')->where('channelname', $channelname)->and_where('deleted_at', '0')->execute()->as_array();
+        $msgdata = DB::select()
+          ->from('message')
+          ->where('channelname', $channelname)
+          ->and_where('deleted_at', '0')
+          ->execute()
+          ->as_array();
 
         $data = ['message_data' => $msgdata, 'invite' => $invite, 'channelname' => $channelname];
 
@@ -150,7 +159,12 @@ class Controller_Register extends Controller_Rest
 
         $mention = Model_Message::read_check($chat_id, $commented_by, $mention_to);
         $comment_data = Model_Message::chat_comment($message_id);
-        $msgdata = DB::select()->from('message')->where('id', $message_id)->and_where('deleted_at', '0')->execute()->current();
+        $msgdata = DB::select()
+          ->from('message')
+          ->where('id', $message_id)
+          ->and_where('deleted_at', '0')
+          ->execute()
+          ->current();
 
         $data = ['comment_data' => $comment_data, 'mention' => $mention, 'message_data' => $msgdata];
 
@@ -172,10 +186,10 @@ class Controller_Register extends Controller_Rest
         endif;
 
         $channelname = Input::post('channelname');
-        $username1 = Input::post('profile_user');
-        $username2 = Input::post('login_user');
+        $profile_user = Input::post('profile_user');
+        $login_user = Input::post('login_user');
 
-        $data = Model_Channel::DM_create($channelname, $username1, $username2);        
+        $data = Model_Channel::DM_create($channelname, $profile_user, $login_user);        
 
         return $this->response($data);
 

@@ -590,7 +590,7 @@
                 let filter;
                 if(myViewModel.stringValue() == ""){
                     filter = true;
-                }else if(data.content.includes(myViewModel.stringValue()) && myViewModel.stringValue() != ""){
+                }else if(data.content.includes(myViewModel.stringValue()) && myViewModel.stringValue() !== ""){
                     filter = true;
                 }else{
                     filter = false;
@@ -604,7 +604,7 @@
                 let filter;
                 if(myViewModel.channelStringValue() == ""){
                     filter = true;
-                }else if(data.channelname.includes(myViewModel.channelStringValue()) && myViewModel.channelStringValue() != ""){
+                }else if(data.channelname.includes(myViewModel.channelStringValue()) && myViewModel.channelStringValue() !== ""){
                     filter = true;
                 }else{
                     filter = false;
@@ -648,7 +648,7 @@
             mention_to: function(isOpen) {
                 // console.log(isOpen);
                 let mention;
-                if( isOpen.mention_to != "all" ) {
+                if( isOpen.mention_to !== "all" ) {
                     mention = '@' + isOpen.mention_to;
                 }else{
                     mention = "";
@@ -838,9 +838,9 @@
                 alert("編集が完了しました。")
 
                 myViewModel.self_introduction(data.self_introduction);
-                myViewModel.url(data.url_link);
+                myViewModel.url_link(data.url_link);
                 myViewModel.self_introduction(myViewModel.self_introduction());
-                myViewModel.url(myViewModel.url());
+                myViewModel.url_link(myViewModel.url_link());
 
                 myViewModel.showProfForm(!myViewModel.showProfForm());
 
@@ -972,7 +972,7 @@
 
 
         function proc() {
-            if(current_message != "0"){
+            if(current_message !== "0"){
                 let formData = {
                     'username': '<?php echo $loginUser ?>',
                     'channelname': channelname,
@@ -1355,7 +1355,7 @@
                 console.log(data);
 
                 // var result = bookmarks.filter((value) => {
-                //     return (JSON.stringify(value) !== JSON.stringify(data['bookmark']));
+                //     return (JSON.stringify(value) !=== JSON.stringify(data['bookmark']));
                 //     console.log(value.id);
                 
                 // });

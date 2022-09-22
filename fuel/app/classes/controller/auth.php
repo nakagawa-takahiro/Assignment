@@ -13,21 +13,26 @@ class Controller_Auth extends Controller
             $email = Input::post('mail');
             Auth::create_user($username, $password, $email, 1);
             
-            DB::insert('channel')->set([
+            DB::insert('channel')
+              ->set([
                 'channelname' => "$username",
                 'owner' => "$username",
                 'open' => 1,
                 'private' => 1
-            ])->execute();
+            ])
+              ->execute();
 
-            DB::insert('profile')->set([
+            DB::insert('profile')
+              ->set([
                 'username' => "$username",
                 'self_introduction' => "よろしくお願いします。",
                 'url_link' => "",
-            ])->execute();
+            ])
+              ->execute();
 
             return View::forge('auth/index');
         }
+        
         return View::forge('auth/index');
 
     }   
