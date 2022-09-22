@@ -346,7 +346,7 @@
             
             <p class="student-name" data-bind="text: username"></p>
             <p class="introduction-student-area" data-bind="text: self_introduction"></p>
-            <p data-bind="text: url"></p>
+			<a data-bind="text: url_link, attr: {href: url_link}"></a>
             <div>
                 <a href="" data-bind="click: moveToDM, visible: dmVisible">DMはこちらのリンクから</a>
                 <a href="" data-bind="click: editProf, visible: profVisible">プロフィールを編集する</a>
@@ -493,7 +493,7 @@
             channelSettingsVisibility: ko.observable(false),
             username: ko.observable(obj.username),
             self_introduction: ko.observable(obj.self_introduction),
-            url: ko.observable(obj.url_link),
+            url_link: ko.observable(obj.url_link),
             showProfForm: ko.observable(false),
             editContent: ko.observable(obj.self_introduction),
             editUrl: ko.observable(obj.url_link),
@@ -685,7 +685,7 @@
                 myViewModel.dmVisible(false);
                 myViewModel.username(data.username);
                 myViewModel.self_introduction(data.self_introduction);
-                myViewModel.url(data.url);
+                myViewModel.url_link(data.url_link);
                 if(myViewModel.profileVisibility()==false){
                     myViewModel.profileVisibility(!myViewModel.profileVisibility());
                     myViewModel.bookmarkVisibility(false);
@@ -746,7 +746,7 @@
 
                 myViewModel.username(data.username);
                 myViewModel.self_introduction(data.self_introduction);
-                myViewModel.url(data.url);
+                myViewModel.url_link(data.url_link);
                 if(myViewModel.profileVisibility()==false){
                     myViewModel.profileVisibility(!myViewModel.profileVisibility());
                     myViewModel.bookmarkVisibility(false);
