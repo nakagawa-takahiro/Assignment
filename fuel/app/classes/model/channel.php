@@ -2,6 +2,11 @@
 
 class Model_Channel extends \Model {
 
+    /**
+     * チャンネル一覧を取得
+     * @param $loginUser string             現在ログインしているユーザーの名前
+     * @return array                        チャンネルデータに未読メッセージのカウントを追加したデータ
+     */
     public static function get_channels($loginUser)
     {
 
@@ -11,28 +16,24 @@ class Model_Channel extends \Model {
           ->execute()
           ->as_array();
 
+        
+        $query = DB::select()
+          ->from('channel')
+          ->where('open', 0)
+          ->where('deleted_at', '0');
+
         if(count($channel_key) !== 0) {
-            $get_channel_data = DB::select()
-            ->from('channel')
-            ->where_open()
-            ->where('open', 0)
-            ->and_where('deleted_at', '0')
-            ->where_close()
+          $query
             ->or_where_open()
-            ->where('id', 'in', $channel_key)
-            ->and_where('deleted_at', '0')
-            ->and_where('open', '1')
-            ->or_where_close()
-            ->execute()
-            ->as_array();
-        } else {
-            $get_channel_data = DB::select()
-            ->from('channel')
-            ->where('open', 0)
-            ->and_where('deleted_at', '0')
-            ->execute()
-            ->as_array();
+              ->where('id', 'in', $channel_key)
+              ->where('deleted_at', '0')
+              ->where('open', '1')
+            ->or_where_close();
         };
+
+        $get_channel_data = $query
+          ->execute()
+          ->as_array();
         
         $private_channel = DB::select()
           ->from('channel')
@@ -42,8 +43,7 @@ class Model_Channel extends \Model {
         
         $all_channels_data = array_merge($get_channel_data, $private_channel);
         
-        $unread = [];
-        $channel_data = [];
+        $unread = $channel_data = [];
 
         $channels_name = array_column($all_channels_data, "channelname");
 
@@ -62,17 +62,9 @@ class Model_Channel extends \Model {
               ->execute()
               ->current();
 
-            if($current_id){
-                $current_id = $current_id['each_channel_id'];
-            }else{
-                $current_id = '0';
-            };
+            $current_id = ($current_id) ? $current_id['each_channel_id']: '0';
 
-            if($each_id){
-                $each_id = $each_id['read_id'];
-            }else{
-                $each_id = '0';
-            };
+            $each_id = ($each_id) ? $each_id['read_id']: '0';
 
             $unread_count = intval($current_id) - intval($each_id);
 
@@ -88,6 +80,14 @@ class Model_Channel extends \Model {
         return $channel_data;
     }
 
+    /**
+     * 新しいチャンネルを登録
+     * @param $loginUser string             現在ログインしているユーザーの名前
+     * @param $channelname string           登録するチャンネルの名前
+     * @param $owner string                 そのチャンネルの所有者(作成者)の名前
+     * @param $open int(0/1)                チャンネルの公開範囲 0 => public, 1 => private
+     * @return array                        新しいチャンネルデータに未読メッセージのカウントを追加したデータ
+     */
     public static function register_channel($loginUser, $channelname, $owner, $open){
         $insert = DB::insert('channel')
           ->set([
@@ -112,28 +112,23 @@ class Model_Channel extends \Model {
           ->execute()
           ->as_array();
 
+        $query = DB::select()
+          ->from('channel')
+          ->where('open', 0)
+          ->where('deleted_at', '0');
+
         if(count($channel_key) !== 0) {
-            $get_channel_data = DB::select()
-              ->from('channel')
-              ->where_open()
-              ->where('open', 0)
-              ->and_where('deleted_at', '0')
-              ->where_close()
-              ->or_where_open()
+          $query
+            ->or_where_open()
               ->where('id', 'in', $channel_key)
-              ->and_where('deleted_at', '0')
-              ->and_where('open', '1')
-              ->or_where_close()
-              ->execute()
-              ->as_array();
-        } else {
-            $get_channel_data = DB::select()
-            ->from('channel')
-            ->where('open', 0)
-            ->and_where('deleted_at', '0')
-            ->execute()
-            ->as_array();
+              ->where('deleted_at', '0')
+              ->where('open', '1')
+            ->or_where_close();
         };
+
+        $get_channel_data = $query
+          ->execute()
+          ->as_array();
         
         $private_channel = DB::select()
           ->from('channel')
@@ -163,17 +158,9 @@ class Model_Channel extends \Model {
               ->execute()
               ->current();
 
-            if($current_id){
-                $current_id = $current_id['each_channel_id'];
-            }else{
-                $current_id = '0';
-            };
+            $current_id = ($current_id) ? $current_id['each_channel_id']: '0';
 
-            if($each_id){
-                $each_id = $each_id['read_id'];
-            }else{
-                $each_id = '0';
-            };
+            $each_id = ($each_id) ? $each_id['read_id']: '0';
 
             $unread_count = intval($current_id) - intval($each_id);
 
@@ -189,6 +176,12 @@ class Model_Channel extends \Model {
         return $channel_data;
     }
 
+    /**
+     * チャンネルの公開範囲を変更
+     * @param $id int                       チャンネルID
+     * @param $open int(0/1)                チャンネルの公開範囲 0 => public, 1 => private
+     * @return array                        チャンネルデータに未読メッセージのカウントを追加したデータ
+     */
     public static function edit_channelvisibility($open, $id){
         DB::update('channel')
           ->value("open", $open)
@@ -202,6 +195,13 @@ class Model_Channel extends \Model {
         return $data;
     }
 
+  
+    /**
+     * チャンネル名を変更
+     * @param $channelname string           現在のチャンネル名
+     * @param $newchannelname string        新しいチャンネル名
+     * @return array                        新しいチャンネル名と新しいチャンネルデータに未読メッセージのカウントを追加したデータ
+     */
     public static function edit_channelname($channelname, $newchannelname){
         $channel_update_result = DB::select('id')
           ->from('channel')
@@ -250,6 +250,14 @@ class Model_Channel extends \Model {
         return $data;
     }
 
+  
+    /**
+     * DMへ移動
+     * @param $loginUser string             現在ログインしているユーザーの名前
+     * @param $channelname string           DMチャンネルの名前
+     * @param $profile_user string          現在見ているプロフィールのユーザー名
+     * @return array                        DMのチャンネル名とそのチャンネルのメッセージデータ
+     */
     public static function DM_create($channelname, $profile_user, $login_user){
         
         $result = DB::select('id')

@@ -2,6 +2,15 @@
 
 class Model_Message extends \Model {
 
+
+    /**
+     * メッセージをデータベースに登録
+     * @param $username string           ユーザー名
+     * @param $message string            メッセージ内容
+     * @param $channelname string        メッセージが送信されたチャンネル名
+     * @param $each_channel_id string    そのチャンネルで送信されたメッセージの最新のID
+     * @return array                     登録したメッセージデータ
+     */
     public static function insert_message($username, $message, $channelname, $each_channel_id)
     {
         $insert = DB::insert('message')
@@ -45,6 +54,12 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * メッセージを削除
+     * @param $id int                  削除するメッセージのID
+     * @param $deleted_at datetime     削除した日時
+     * @return array                   削除したメッセージ
+     */
     public static function delete_message($id, $deleted_at)
     {
         DB::update('message')
@@ -61,6 +76,12 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * メッセージを編集
+     * @param $id int                  削除するメッセージのID
+     * @param $content string          メッセージ内容
+     * @return array                   編集したメッセージデータ
+     */
     public static function edit_message($id, $content)
     {
         DB::update('message')
@@ -77,6 +98,12 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * goodを送信
+     * @param $id int                  goodが押されたメッセージのID
+     * @param $res_good int            good数
+     * @return array                   goodが押されたメッセージデータ
+     */
     public static function click_like($id, $res_good)
     {
         DB::update('message')
@@ -93,6 +120,12 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * badを送信
+     * @param $id int                  badが押されたメッセージのID
+     * @param $res_bad int             bad数
+     * @return array                   badが押されたメッセージデータ
+     */
     public static function click_dislike($id, $res_bad)
     {
         DB::update('message')
@@ -109,6 +142,13 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * ブックマークに登録
+     * @param $message_id int                  ブックマークされたメッセージのID
+     * @param $username string                 ブックマークしたユーザー
+     * @param $bookmark_state datetime         既にブックマークされているかいないか        
+     * @return array                           新しくブックマークに登録されたメッセージのデータ
+     */
     public static function register_bookmark($message_id, $username, $bookmark_state)
     {
         $result =  DB::select()
@@ -151,6 +191,13 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * ブックマークから削除
+     * @param $bookmark_id int                 ブックマークのID
+     * @param $username string                 ブックマークしたユーザー
+     * @param $bookmark_state datetime         既にブックマークされているかいないか     
+     * @return array                           そのユーザーのブックマークデータ(removeが効かないため、現時点ではすべて取得)
+     */
     public static function delete_bookmark($username, $bookmark_id, $bookmark_state)
     {
         DB::update('bookmark')
@@ -187,6 +234,11 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * スレッドに表示すべきコメントを取得
+     * @param $chat_id int        スレッドが開かれたメッセージのID
+     * @return array              コメントのデータ
+     */
     public static function chat_comment($chat_id)
     {
 
@@ -199,6 +251,15 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * コメントを送信
+     * @param $chat_id int                  スレッドが表示されたメッセージのID
+     * @param $channelname string           そのメッセージが送信されたチャンネルの名前
+     * @param $commented_by string          コメントを送信したユーザー
+     * @param $comment_content string       コメント内容
+     * @param $mention_to string            メンション相手
+     * @return array                        該当する全コメントデータ
+     */
     public static function comment_post($chat_id, $channelname, $commented_by, $comment_content, $mention_to)
     {
         $insert = DB::insert('comment')
@@ -220,6 +281,13 @@ class Model_Message extends \Model {
         return $data;
     }
 
+    /**
+     * メンション付きのコメントの既読チェック
+     * @param $chat_id int                  スレッドが表示されたメッセージのID
+     * @param $commented_by string          コメントを送信したユーザー
+     * @param $mention_to string            メンション相手
+     * @return array                        全コメントデータ
+     */
     public static function read_check($chat_id, $commented_by, $mention_to)
     {
         $date = date('Y-m-d H:i:s');
@@ -240,8 +308,13 @@ class Model_Message extends \Model {
         return $mentions;
     }
 
-    
-
+    /**
+     * チャンネル名の横に表示するメッセージの未読チェック
+     * @param $username string           現在ログインしているユーザーの名前
+     * @param $channelname string        現在いるチャンネルの名前
+     * @param $read_id id                そのユーザーが読んだ最新のメッセージのID(チャンネルごと)
+     * @return array                     
+     */
     public static function read_message($username, $channelname, $read_id)
     {
         $result = DB::select()

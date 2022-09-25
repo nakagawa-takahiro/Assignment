@@ -69,9 +69,6 @@ class Controller_Auth extends Controller
     {
         $result = Auth::logout();
         Response::redirect('auth/index');
-
-
-
     }
 
 }

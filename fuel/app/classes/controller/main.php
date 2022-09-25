@@ -2,76 +2,84 @@
 
 class Controller_Main extends Controller
 {
+
+  public function before()
+  {
+      if (!Auth::check())
+      {
+          Response::redirect('/auth/login');
+      }
+  }
     
-    public function action_index()
-    {
-        $loginUser = Auth::get_screen_name();
-        
-        $data['data'] = Model_Channel::get_channels($loginUser);
-		$data['profdata'] = DB::select()->from('profile')->where('username', $loginUser)->execute()->current();
+  public function action_index()
+  {
+      $loginUser = Auth::get_screen_name();
+      
+      $data['data'] = Model_Channel::get_channels($loginUser);
+      $data['profdata'] = DB::select()->from('profile')->where('username', $loginUser)->execute()->current();
 
-        $data['loginUser'] = $loginUser;
+      $data['loginUser'] = $loginUser;
 
-        $mentions = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
-          ->from('comment')
-          ->where('mention_to', $loginUser)
-          ->and_where('read_check', 'is', null)
-          ->execute()
-          ->as_array();
-        
-        $invitations = DB::select('username_to', 'username_from', 'channelname')
-          ->from('invite')
-          ->where('username_to', $loginUser)
-          ->and_where('checked_at', 'is', null)
-          ->execute()
-          ->as_array();
+      $mentions = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
+        ->from('comment')
+        ->where('mention_to', $loginUser)
+        ->and_where('read_check', 'is', null)
+        ->execute()
+        ->as_array();
+      
+      $invitations = DB::select('username_to', 'username_from', 'channelname')
+        ->from('invite')
+        ->where('username_to', $loginUser)
+        ->and_where('checked_at', 'is', null)
+        ->execute()
+        ->as_array();
 
-        // $notifications=[];
+      // $notifications=[];
 
-        // foreach($mentions as $mention){
-        //     $newmentions[] = [
+      // foreach($mentions as $mention){
+      //     $newmentions[] = [
 
-        //     ]
-        // }
+      //     ]
+      // }
 
-        $data['notification'] = $invitations;
-        $data['mention'] = $mentions;
+      $data['notification'] = $invitations;
+      $data['mention'] = $mentions;
 
-        $bookmark_id = DB::select('message_id')
-          ->from('bookmark')
-          ->where('username', $loginUser)
-          ->and_where('deleted_at', '0')
-          ->execute()
-          ->as_array();
-		
-        if(count($bookmark_id) !== 0) {
-            $bookmark = DB::select('id', 'username', 'content', 'posted_at', 'channelname', 'res_good', 'res_bad')
-              ->from('message')
-              ->where('id', 'in', $bookmark_id)
-              ->and_where('deleted_at', '0')
-              ->execute()
-              ->as_array();
-        } else {
-            $bookmark = [];
-        };
+      $bookmark_id = DB::select('message_id')
+        ->from('bookmark')
+        ->where('username', $loginUser)
+        ->and_where('deleted_at', '0')
+        ->execute()
+        ->as_array();
+  
+      if(count($bookmark_id) !== 0) {
+          $bookmark = DB::select('id', 'username', 'content', 'posted_at', 'channelname', 'res_good', 'res_bad')
+            ->from('message')
+            ->where('id', 'in', $bookmark_id)
+            ->and_where('deleted_at', '0')
+            ->execute()
+            ->as_array();
+      } else {
+          $bookmark = [];
+      };
 
-        $data['bookdata'] = $bookmark;
+      $data['bookdata'] = $bookmark;
 
-		$data['comment'] = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
-          ->from('comment')
-          ->where('deleted_at', '0')
-          ->execute()
-          ->as_array();
+      $data['comment'] = DB::select('id', 'channelname', 'chat_id', 'commented_by', 'mention_to', 'comment_content', 'posted_at')
+        ->from('comment')
+        ->where('deleted_at', '0')
+        ->execute()
+        ->as_array();
 
-        $data['users'] = DB::select('username')
-          ->from('users')
-          ->distinct()
-          ->execute()
-          ->as_array();
+      $data['users'] = DB::select('username')
+        ->from('users')
+        ->distinct()
+        ->execute()
+        ->as_array();
 
-        return View::forge('main', $data);
-        
+      return View::forge('main', $data);
+      
 
-    }
+  }
 
 }

@@ -5,6 +5,22 @@ class Controller_Messages extends Controller_Rest
     
     protected $default_format = 'json';
 
+    public function router($method, $params)
+    {
+        parent::router($method, $params);
+        $data = "ok";
+
+        if (!Auth::check())
+        {
+            $data = "error";
+        }
+
+        if($data === "error"){
+            $result = Auth::logout();
+            return $this->response($data);
+        }
+    }
+
     public function post_get_message()
     {
         

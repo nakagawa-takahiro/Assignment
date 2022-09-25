@@ -2,6 +2,12 @@
 
 class Model_Invite extends \Model {
 
+    /**
+     * 招待したことの記録
+     * @param $channelname string           招待が発生したチャンネルの名前
+     * @param $invited_user string          招待されたユーザーの名前
+     * @param $username_from string         招待したユーザーの名前
+     */
     public static function insert_invitation($channelname, $invited_user, $username_from)
     {
 
@@ -15,6 +21,13 @@ class Model_Invite extends \Model {
         
     }
 
+    /**
+     * 招待を確認したことの記録
+     * @param $channelname string           招待が発生したチャンネルの名前
+     * @param $username_to string           招待されたユーザーの名前
+     * @param $username_from string         招待したユーザーの名前
+     * @return array                        残った招待通知のデータ
+     */
     public static function delete_invitation($channelname, $username_to, $username_from)
     {
 

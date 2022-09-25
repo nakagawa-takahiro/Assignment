@@ -1019,33 +1019,40 @@
             }).done(function(data) {
                 console.log("===========================================");
                 console.log(data);
-                message_data = data['data'];
-                userlist = data['users'];
-                channelname = channel['channelname'];
-                current_message = data['current_message'];
-                channelData = data['channelData'];
-                current_message = data['current_message'];
-                newchanneldata = data['channeldata'];
-                console.log(userlist);
 
-                myViewModel.messages(message_data);
-                myViewModel.userlist(userlist);
-                myViewModel.channelname(channelname);
-                myViewModel.channels(newchanneldata);
-                myViewModel.message_intro_text("In " + channelname);
-
-                if (channelData.owner == '<?php echo $loginUser; ?>'){
-                    myViewModel.channelSettingsVisibility(true);
+                if(data==="error"){
+                    alert("ログインし直して下さい。");
+                    location.href = '<?php echo Uri::create('auth/index'); ?>';
                 }else{
-                    myViewModel.channelSettingsVisibility(false);
-                }
-                myViewModel.channelSettingsVisibility(myViewModel.channelSettingsVisibility());
-                myViewModel.messages(myViewModel.messages());
-                myViewModel.showForm(true);
-                proc();
 
-                var obj = document.getElementById('message');
-                obj.scrollIntoView(false);
+                    message_data = data['data'];
+                    userlist = data['users'];
+                    channelname = channel['channelname'];
+                    current_message = data['current_message'];
+                    channelData = data['channelData'];
+                    current_message = data['current_message'];
+                    newchanneldata = data['channeldata'];
+                    console.log(userlist);
+
+                    myViewModel.messages(message_data);
+                    myViewModel.userlist(userlist);
+                    myViewModel.channelname(channelname);
+                    myViewModel.channels(newchanneldata);
+                    myViewModel.message_intro_text("In " + channelname);
+
+                    if (channelData.owner == '<?php echo $loginUser; ?>'){
+                        myViewModel.channelSettingsVisibility(true);
+                    }else{
+                        myViewModel.channelSettingsVisibility(false);
+                    }
+                    myViewModel.channelSettingsVisibility(myViewModel.channelSettingsVisibility());
+                    myViewModel.messages(myViewModel.messages());
+                    myViewModel.showForm(true);
+                    proc();
+
+                    var obj = document.getElementById('message');
+                    obj.scrollIntoView(false);
+            }
 
 
             }).fail(function() {
