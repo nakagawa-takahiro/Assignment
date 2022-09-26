@@ -91,10 +91,10 @@ class Model_Channel extends \Model {
     public static function register_channel($loginUser, $channelname, $owner, $open){
         $insert = DB::insert('channel')
           ->set([
-			'channelname' => "$channelname",
-			'open' => $open,
-			'owner' => "$owner"
-		  ])
+            'channelname' => "$channelname",
+            'open' => $open,
+            'owner' => "$owner"
+            ])
           ->execute();
 
         if($insert) {

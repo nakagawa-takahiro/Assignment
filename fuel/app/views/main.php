@@ -658,6 +658,13 @@
             
         };
 
+        loginCheck = function(aaa) {
+            if(aaa==='error'){
+                alert("ログインし直して下さい。");
+                location.href = '<?php echo Uri::create('auth/index'); ?>';
+            }
+        };
+
         myViewModel.showProfile = function() {
 
             event.preventDefault();
@@ -680,6 +687,8 @@
             }).done(function(data) {
                 console.log("===========================================");
                 console.log(data);
+
+                loginCheck(data);
                 // myViewModel.profileData(myViewModel.profileData(data));
                 myViewModel.profVisible(true);
                 myViewModel.dmVisible(false);
@@ -735,6 +744,7 @@
                 console.log("===========================================");
                 console.log(data);
                 // myViewModel.profileData(myViewModel.profileData(data));
+                loginCheck(data);
 
                 if(data.username == '<?php echo $loginUser ?>'){
                     myViewModel.dmVisible(false);
@@ -788,6 +798,7 @@
                 alert("DMに移動します。");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
                 myViewModel.messages(data['message_data']);
                 myViewModel.message_intro_text("In " + data['channelname'].channelname);
                 myViewModel.channelname(data['channelname'].channelname);
@@ -834,6 +845,7 @@
                 // alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
 
                 alert("編集が完了しました。")
 
@@ -879,6 +891,7 @@
                 // alert("新しいチャンネルに移動します。");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
                 myViewModel.channels(data['newchanneldata']);
                 myViewModel.channelname(data['newchannelname']);
                 myViewModel.message_intro_text("In " + data['newchannelname']);
@@ -910,6 +923,7 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
                 myViewModel.channels(data);
 
 
@@ -949,6 +963,7 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
                 myViewModel.messages.push(data);
                 myViewModel.messages(myViewModel.messages());
                 // myViewModel.channels(data);
@@ -990,6 +1005,7 @@
                 }).done(function(data) {
                     console.log("===========================================");
                     console.log(data);
+                    loginCheck(data);
 
                 }).fail(function() {
                     alert("失敗");
@@ -1020,40 +1036,35 @@
                 console.log("===========================================");
                 console.log(data);
 
-                if(data==="error"){
-                    alert("ログインし直して下さい。");
-                    location.href = '<?php echo Uri::create('auth/index'); ?>';
+                loginCheck(data);
+
+                message_data = data['data'];
+                userlist = data['users'];
+                channelname = channel['channelname'];
+                current_message = data['current_message'];
+                channelData = data['channelData'];
+                current_message = data['current_message'];
+                newchanneldata = data['channeldata'];
+                console.log(userlist);
+
+                myViewModel.messages(message_data);
+                myViewModel.userlist(userlist);
+                myViewModel.channelname(channelname);
+                myViewModel.channels(newchanneldata);
+                myViewModel.message_intro_text("In " + channelname);
+
+                if (channelData.owner == '<?php echo $loginUser; ?>'){
+                    myViewModel.channelSettingsVisibility(true);
                 }else{
+                    myViewModel.channelSettingsVisibility(false);
+                }
+                myViewModel.channelSettingsVisibility(myViewModel.channelSettingsVisibility());
+                myViewModel.messages(myViewModel.messages());
+                myViewModel.showForm(true);
+                proc();
 
-                    message_data = data['data'];
-                    userlist = data['users'];
-                    channelname = channel['channelname'];
-                    current_message = data['current_message'];
-                    channelData = data['channelData'];
-                    current_message = data['current_message'];
-                    newchanneldata = data['channeldata'];
-                    console.log(userlist);
-
-                    myViewModel.messages(message_data);
-                    myViewModel.userlist(userlist);
-                    myViewModel.channelname(channelname);
-                    myViewModel.channels(newchanneldata);
-                    myViewModel.message_intro_text("In " + channelname);
-
-                    if (channelData.owner == '<?php echo $loginUser; ?>'){
-                        myViewModel.channelSettingsVisibility(true);
-                    }else{
-                        myViewModel.channelSettingsVisibility(false);
-                    }
-                    myViewModel.channelSettingsVisibility(myViewModel.channelSettingsVisibility());
-                    myViewModel.messages(myViewModel.messages());
-                    myViewModel.showForm(true);
-                    proc();
-
-                    var obj = document.getElementById('message');
-                    obj.scrollIntoView(false);
-            }
-
+                var obj = document.getElementById('message');
+                obj.scrollIntoView(false);
 
             }).fail(function() {
                 alert("失敗");
@@ -1087,6 +1098,7 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
                 // channelname = data['channelname'];
                 myViewModel.message_intro_text("In " + channelname);
                 myViewModel.channelname(channelname);
@@ -1127,6 +1139,7 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
 
                 if(myViewModel.commentsVisibility() == false){
                     myViewModel.commentsVisibility(!myViewModel.commentsVisibility());
@@ -1184,6 +1197,7 @@
                 alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
                 myViewModel.addChannelForm(!myViewModel.addChannelForm());
                 myViewModel.channels(data);
 
@@ -1219,6 +1233,7 @@
                 // alert("成功");
                 console.log("===========================================");
                 // console.log(data);
+                loginCheck(data);
 
                 myViewModel.messages.push(data);
                 myViewModel.messages(myViewModel.messages());
@@ -1259,6 +1274,7 @@
             }).done(function(data) {
                 // alert("成功");
                 console.log("===========================================");
+                loginCheck(data);
                 let index = getIndex(goodId, message_data, 'id');
                 myViewModel.messages()[index] = data;
                 myViewModel.messages(myViewModel.messages());
@@ -1299,6 +1315,7 @@
                 // alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
                 let index = getIndex(badId, message_data, 'id');
                 myViewModel.messages()[index] = data;
                 myViewModel.messages(myViewModel.messages());
@@ -1360,6 +1377,7 @@
                 // alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
 
                 // var result = bookmarks.filter((value) => {
                 //     return (JSON.stringify(value) !=== JSON.stringify(data['bookmark']));
@@ -1427,6 +1445,7 @@
                     // alert("成功");
                     console.log("===========================================");
                     console.log([data]);
+                    loginCheck(data);
 
                     let index = getIndex(editChatId, message_data, 'id');
                     myViewModel.messages()[index] = data;
@@ -1479,6 +1498,7 @@
                 // alert("成功");
                 console.log("===========================================");
                 console.log(data);
+                loginCheck(data);
 
                 let index = getIndex(id, message_data, 'id');
                 myViewModel.messages.remove(myViewModel.messages()[index]);
@@ -1530,6 +1550,7 @@
                 console.log("===========================================");
                 console.log(data);
                 // console.log(myViewModel.chats());
+                loginCheck(data);
 
                 myViewModel.chats(data);
                 myViewModel.form3("");
@@ -1572,6 +1593,7 @@
                 // alert("成功");
                 console.log("===========================================");
                 // console.log(data);
+                loginCheck(data);
 
                 if(myViewModel.commentsVisibility() == false){
                     myViewModel.commentsVisibility(!myViewModel.commentsVisibility());
