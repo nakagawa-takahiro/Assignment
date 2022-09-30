@@ -1,8 +1,6 @@
 # HR クラウド 内定者インターン課題
 
-### ~9/26 の成果
-
-- Review対応
+### [企画書](https://docs.google.com/document/d/14DnYqNwRllQmid9v-6IxLJKhYCAG9-0E_MxvIwDYjII/edit?usp=sharing)
 
 ## <課題　開発編要件>
 
@@ -69,3 +67,4 @@
 ### [データベース設計](https://docs.google.com/spreadsheets/d/1eardZKwNqOiGUFWTd6UJJSQfEZRKDcCcSSX4yI41e7E/edit?usp=sharing)
 
 ### [SQLファイル](./main/kmchat.sql)
+

@@ -93,6 +93,6 @@ class Controller_Messages extends Controller_Rest
           ->execute()
           ->current();
         
-        return $data;
+          return $this->response($data);
     }
 }
